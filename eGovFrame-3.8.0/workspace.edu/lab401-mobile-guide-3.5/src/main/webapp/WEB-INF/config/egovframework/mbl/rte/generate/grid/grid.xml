@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="grid">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[				
+					<div class="{csslineCnt}">
+					     {component}
+					</div>		  
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<div class="{ui-block}"><div class="ui-body-b" style="text-align:center"><h4>{text}</h4></div></div>          
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+	<component id="differgrid">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[				
+					<div class="{csslineCnt}">
+					     {component}
+					</div>		  
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<div class="{ui-block}"><div class="ui-body-b" style="text-align:center"><h4>{text}</h4></div></div>          
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>	
+</generateCode>

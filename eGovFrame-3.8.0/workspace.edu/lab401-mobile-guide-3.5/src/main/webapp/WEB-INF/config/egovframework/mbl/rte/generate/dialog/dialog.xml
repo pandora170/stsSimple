@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="dialog">
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<a href="{dialogUrl}" data-role="button" data-rel="dialog" {attr} >Dialog</a>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+	
+	<component id="overlay">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	            $(document).ready( function() {
+	                $("#overlay").click( function() {
+	                    jOverlay('{etcContent}', '{etcHeader}', '{etcTheme}');
+	                });
+	            });                   
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                 <a href="#" data-role="button" id="overlay">overlay</a>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>    
+	</component>
+	
+	<component id="alert">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	            $(document).ready( function() {
+	                $("#alert").click( function() {
+	                    jAlert('{etcContent}', '{etcHeader}', '{etcTheme}');
+	                });
+	            });                   
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                 <a href="#" data-role="button" id="alert">Alert</a>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>    
+	</component>
+	
+	<component id="confirm">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	            $(document).ready( function() {
+	                $("#confirm").click( function() {
+	                    jConfirm('{etcContent}', '{etcHeader}', '{etcTheme}', function(r) {
+	                    });
+	                });
+	            });                   
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                 <a href="#" data-role="button" id="confirm">Confirm</a>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>    
+	</component>
+
+	<component id="prompt">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	            $(document).ready( function() {
+	                $("#prompt").click( function() {
+	                    jPrompt('{etcContent}', '{etcHeader}', '{etcTheme}', function(r) {
+	                    $('#promptOut').text(r);
+	                    }); 
+	                });
+	            });
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                 <a href="#" data-role="button" id="prompt">Prompt</a>
+	                 <strong>you entered : <span id="promptOut"></span></strong>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>    
+	</component>	
+	
+	<component id="actionsheet">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	            $(document).ready( function() {
+	                $("#actionsheet").click( function() {            
+	                    var btmItem = [{compAction}];
+	                    jActionSheet('{etcContent}', '{etcHeader}', '{etcTheme}', btmItem , function(r) {
+	                        $('#actionsheetOut').text(r);
+	                    });
+	                });
+	               });
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                 <a href="#" data-role="button" id="actionsheet">ActionSheet</a>
+	                 <strong>you entered : <span id="actionsheetOut"></span></strong>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>    
+	</component>					
+</generateCode>

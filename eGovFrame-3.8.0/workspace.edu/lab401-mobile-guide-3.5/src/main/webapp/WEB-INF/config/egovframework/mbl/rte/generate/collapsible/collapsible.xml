@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="collapsible">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[
+		            <div data-role="collapsible-set">
+		           		 {component}
+		            </div> 
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+		            <div data-role="collapsible" {attr}>
+						<h3>{compTitle}</h3>
+						<p>{compText}</p>
+					</div>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+</generateCode>

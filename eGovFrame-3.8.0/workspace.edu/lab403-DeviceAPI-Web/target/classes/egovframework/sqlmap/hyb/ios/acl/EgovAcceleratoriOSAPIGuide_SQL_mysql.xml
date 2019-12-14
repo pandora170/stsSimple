@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AcceleratoriOSInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="acceleratoriOSSearchVO" type="egovframework.hyb.ios.acl.service.AcceleratoriOSAPIDefaultVO"/>
+	<typeAlias  alias="acceleratoriOSAPIVO" type="egovframework.hyb.ios.acl.service.AcceleratoriOSAPIVO"/>
+
+	<resultMap id="acceleratoriOSInfo" class="egovframework.hyb.ios.acl.service.AcceleratoriOSAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="xaxis" column="XAXIS"/>
+		<result property="yaxis" column="YAXIS"/>
+		<result property="zaxis" column="ZAXIS"/>
+		<result property="timestamp" column="TIMESTAMP"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="acceleratoriOSAPIDAO.insertAcceleratorInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (IFNULL(MAX(SN), 0)+1) sn from ACCELERATOR
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO ACCELERATOR 
+				( SN
+				  , UUID
+				  , XAXIS
+				  , YAXIS
+				  , ZAXIS
+				  , TIMESTAMP
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #xaxis#
+				  , #yaxis#
+				  , #zaxis#
+				  , #timestamp#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<update id="acceleratoriOSAPIDAO.updateAcceleratorInfo">
+		<![CDATA[
+			UPDATE ACCELERATOR 
+			SET SN=#sn#
+				, UUID=#uuid#
+				, XAXIS=#xaxis#
+				, YAXIS=#yaxis#
+				, ZAXIS=#zaxis#
+				, TIMESTAMP=#timestamp#
+				, USEYN=#useYn#
+			WHERE SN=#sn#
+		]]>
+	</update>
+	
+	<delete id="acceleratoriOSAPIDAO.deleteAcceleratorInfo">
+		<![CDATA[
+			UPDATE ACCELERATOR 
+			SET USEYN='N'
+		]]>
+	</delete>
+	
+	<select id="acceleratoriOSAPIDAO.selectAcceleratorInfo" resultMap="acceleratoriOSInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, XAXIS, YAXIS, ZAXIS, TIMESTAMP, USEYN
+			FROM ACCELERATOR 
+			WHERE SN=#sn#
+		]]>
+	</select>
+	
+	<select id="acceleratoriOSAPIDAO.selectAcceleratorInfoList" parameterClass="acceleratoriOSSearchVO" resultClass="acceleratoriOSAPIVO">
+
+			SELECT
+				SN, UUID, XAXIS, YAXIS, ZAXIS, TIMESTAMP, USEYN
+			FROM ACCELERATOR WHERE USEYN='Y'
+				
+	</select>
+	
+	<select id="acceleratoriOSAPIDAO.selectAcceleratorInfoListTotCnt" parameterClass="acceleratoriOSSearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM ACCELERATOR
+			WHERE 1=1
+			<isEqual prepend="AND" property="searchCondition" compareValue="0">
+				UUID = #searchKeyword#
+			</isEqual>
+			<isEqual prepend="AND" property="searchCondition" compareValue="1">
+				NTWRK_TYPE LIKE CONCAT('%',#searchKeyword#,'%')
+			</isEqual>
+	</select>
+
+
+</sqlMap>

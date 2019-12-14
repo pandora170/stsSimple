@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GPSiOSInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="GPSiOSsearchVO" type="egovframework.hyb.ios.gps.service.GPSiOSAPIDefaultVO"/>
+
+	<resultMap id="GPSiOSInfo" class="egovframework.hyb.ios.gps.service.GPSiOSAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="lat" column="LA"/>
+		<result property="lon" column="LO"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="gpsiOSAPIDAO.insertGPSInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from GPS
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO GPS 
+				( SN
+				  , UUID
+				  , LA
+				  , LO
+				  , ACCRCY
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #lat#
+				  , #lon#
+				  , ' '
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<delete id="gpsiOSAPIDAO.deleteGPSInfo">
+		<![CDATA[
+			UPDATE GPS 
+			SET USEYN='N'
+		]]>
+	</delete>
+	
+	<select id="gpsiOSAPIDAO.selectGPSInfoList" parameterClass="GPSiOSsearchVO" resultClass="egovMap">
+
+			SELECT
+				SN, UUID, LA, LO, USEYN
+			FROM GPS
+			WHERE USEYN='Y'
+			ORDER BY SN DESC
+			limit #firstIndex#, #recordCountPerPage#	
+	</select>
+	
+	<select id="gpsiOSAPIDAO.selectGPSInfoListTotCnt" parameterClass="GPSiOSsearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM GPS
+	</select>
+
+</sqlMap>

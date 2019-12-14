@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StreamingMediaInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	
+	<resultMap id="streamingMediaList" class="egovframework.hyb.mbl.stm.service.StreamingMediaAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="mdSj" column="MD_SJ"/>
+		<result property="revivCo" column="REVIV_CO"/>
+		<result property="mdCode" column="MD_CODE"/>		
+	</resultMap>
+	
+	<resultMap id="stramingMediaFile" class="egovframework.hyb.mbl.stm.service.StreamingMediaAPIFileVO">
+		<result property="mdCode" column="MD_CODE"/>
+		<result property="fileSn" column="FILE_SN"/>
+		<result property="fileStreCours" column="FILE_STRE_COURS"/>
+		<result property="streFileNm" column="STRE_FILE_NM"/>
+		<result property="fileExtsn" column="FILE_EXTSN"/>
+	</resultMap>
+	
+	<select id="streamingMediaAPIDAO.selectMediaInfoList" resultMap="streamingMediaList">
+		<![CDATA[	
+	    	SELECT
+				SN, MD_SJ, REVIV_CO, MD_CODE
+			FROM MEDIA
+			WHERE USEYN = 'Y'
+			  AND MD_CODE NOT IN ('MLT02', 'MLT03')
+			ORDER BY SN DESC
+		]]>	
+	</select>
+	
+	<select id="streamingMediaAPIDAO.selectMediaFileInfo" resultMap="stramingMediaFile">
+		<![CDATA[	
+	    	SELECT
+				A.MD_CODE, B.FILE_SN, B.FILE_STRE_COURS, B.STRE_FILE_NM, B.FILE_EXTSN
+			FROM MEDIA A JOIN FILE_DETAIL_INFO B USING(FILE_SN)
+			WHERE A.SN = #sn#
+		]]>	
+	</select>
+	
+	<update id="streamingMediaAPIDAO.updateMediaInfoRevivCo">
+		<![CDATA[
+			UPDATE	MEDIA
+			 SET REVIV_CO = REVIV_CO + 1
+ 			WHERE  SN = #sn#
+		]]>
+	</update>
+	
+</sqlMap>

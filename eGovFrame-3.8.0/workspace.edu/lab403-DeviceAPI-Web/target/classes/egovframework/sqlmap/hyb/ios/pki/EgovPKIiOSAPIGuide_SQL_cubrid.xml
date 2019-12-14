@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PKIiOSInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="PKIiOSSearchVO" type="egovframework.hyb.ios.pki.service.PKIiOSAPIDefaultVO"/>
+
+	<resultMap id="PKIiOSInfo" class="egovframework.hyb.ios.pki.service.PKIiOSAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="dn" column="dn"/>
+		<result property="crtfcDt" column="crtfcDt"/>
+		<result property="entrprsSeCode" column="ENTRPRS_SE_CODE"/>
+	</resultMap>
+	
+	<insert id="pkiiOSAPIDAO.insertPKIInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from pki		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO pki 
+				( SN
+				  , UUID
+				  , dn
+				  , crtfc_dt
+				  , ENTRPRS_SE_CODE)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #dn#
+				  , SYSDATETIME
+				  , #entrprsSeCode#)
+		]]>
+	</insert>
+	
+	<select id="pkiiOSAPIDAO.selectPKIInfoList" parameterClass="PKIiOSSearchVO" resultClass="egovMap">
+
+			SELECT
+				SN, 
+				UUID, 
+				dn, 
+				DATE_FORMAT(crtfc_dt, '%Y-%m-%d %H:%i:%s') crtfc_dt, 
+				ENTRPRS_SE_CODE
+			FROM pki
+			ORDER BY SN DESC
+			limit #firstIndex#, #recordCountPerPage#
+				
+	</select>
+		
+	<select id="pkiiOSAPIDAO.selectPKIInfoListTotCnt" parameterClass="PKIiOSSearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM pki
+	</select>
+		
+</sqlMap>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GPSAndroidInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="GPSAndroidsearchVO" type="egovframework.hyb.add.gps.service.GPSAndroidAPIDefaultVO"/>
+	<typeAlias  alias="GPSAndroidVO" type="egovframework.hyb.add.gps.service.GPSAndroidAPIVO"/>
+
+	<resultMap id="GPSAndroidInfo" class="egovframework.hyb.add.gps.service.GPSAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="lat" column="LA"/>
+		<result property="lon" column="LO"/>
+		<result property="accrcy" column="ACCRCY"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="gpsAndroidAPIDAO.insertGPSInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from GPS
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO GPS 
+				( SN
+				  , UUID
+				  , LA
+				  , LO
+				  , ACCRCY
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #lat#
+				  , #lon#
+				  , #accrcy#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<delete id="gpsAndroidAPIDAO.deleteGPSInfo">
+		<![CDATA[
+			UPDATE GPS 
+			SET USEYN='N'
+			WHERE UUID = #uuid#
+		]]>
+	</delete>
+	
+	<select id="gpsAndroidAPIDAO.selectGPSInfoList" parameterClass="GPSAndroidVO" resultClass="GPSAndroidVO">
+
+			SELECT
+				SN, UUID, LA lat, 
+				LO lon, USEYN
+			FROM GPS
+			WHERE USEYN='Y'			
+			AND UUID = #uuid#
+			ORDER BY SN DESC
+	</select>
+	
+	<select id="gpsAndroidAPIDAO.selectGPSInfoListTotCnt" parameterClass="GPSAndroidsearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM GPS
+	</select>
+
+</sqlMap>

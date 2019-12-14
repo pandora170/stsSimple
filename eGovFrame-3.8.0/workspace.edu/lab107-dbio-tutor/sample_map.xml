@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper>
+	<resultMap id="resultMap" type="java.lang.String">
+		<result property="deptName" column="DEPT_NAME" />
+	</resultMap>
+	<select id="selectDept" parameterType="java.lang.String"
+		resultMap="resultMap">
+SELECT DEPT_NAME
+ FROM DEPT WHERE DEPT_NO = #{deptNo}
+</select>
+</mapper>

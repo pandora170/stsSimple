@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="VibratoriOSInfo">
+
+    <typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="vibratoriOSSearchVO" type="egovframework.hyb.ios.vbr.service.VibratoriOSAPIDefaultVO"/>
+
+	<resultMap id="vibratoriOSInfo" class="egovframework.hyb.ios.vbr.service.VibratoriOSAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="timeStamp" column="TIMESTAMP"/>
+	</resultMap>
+
+	<insert id="vibratoriOSAPIDAO.insertVibrator">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from Vibrator
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO Vibrator 
+				( SN
+				  , UUID
+				  , TIMESTAMP )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #timeStamp#)
+		]]>
+	</insert>
+
+	<select id="vibratoriOSAPIDAO.selectVibratorList" parameterClass="vibratoriOSSearchVO" resultClass="egovMap">
+
+			SELECT
+				SN, UUID, TIMESTAMP
+			FROM VIBRATOR
+			ORDER BY SN DESC
+	</select>
+</sqlMap>

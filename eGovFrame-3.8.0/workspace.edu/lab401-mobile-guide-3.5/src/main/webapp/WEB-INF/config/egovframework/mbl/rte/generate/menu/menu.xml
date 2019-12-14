@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+    <component id="dialog">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" data-inset="true" {attr}>
+                        <li data-role="list-divider">menu</li>  
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li><a href="#dialogSubMenu" data-rel="dialog" {attr}>{compText}</a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>    
+    
+    <component id="grid">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[               
+                    <div class="{csslineCount}">
+                         {component}
+                    </div>        
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <div class="{ui-block}"><a href="#" data-role="button">Menu {nextval}</a></div>          
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    
+    </component>
+        
+    <component id="nestedList">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>            
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li>
+                        <h3>{compTitle}</h3>
+                        <p>{compSubTitle}</p>
+                        {innerComponent}
+                    </li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>    
+    
+    <component id="innerNestedList">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li><a href="#">{compText}</a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>   
+    
+    <component id="accordion">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <div data-role="collapsible-set" {attr}>
+                        {component}
+                    </div>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <div data-role="collapsible"  data-collapsed="true" {attr} >
+                    <h3>{compTitle}</h3>
+                    {innerComponent}
+                    </div>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>
+    
+    <component id="innerAccordion">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" data-inset="true">
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li><a href="#">{compText}</a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>        
+        
+</generateCode>

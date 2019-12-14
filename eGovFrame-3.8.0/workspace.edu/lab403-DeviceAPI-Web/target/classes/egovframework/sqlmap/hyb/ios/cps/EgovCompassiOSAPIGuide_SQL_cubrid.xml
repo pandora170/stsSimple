@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CompassiOSInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="compassiOSSearchVO" type="egovframework.hyb.ios.cps.service.CompassiOSAPIDefaultVO"/>
+	<typeAlias  alias="CompassiOSAPIVO" type="egovframework.hyb.ios.cps.service.CompassiOSAPIVO"/>
+
+	<resultMap id="compassiOSInfo" class="egovframework.hyb.ios.cps.service.CompassiOSAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="drc" column="DRC"/>
+		<result property="accrcy" column="ACCRCY"/>
+		<result property="timestamp" column="TIMESTAMP"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="compassiOSAPIDAO.insertCompassInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from COMPASS
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO COMPASS 
+				( SN
+				  , UUID
+				  , DRC
+				  , ACCRCY
+				  , "TIMESTAMP"
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #drc#
+				  , #accrcy#
+				  , #timestamp#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<update id="compassiOSAPIDAO.updateCompassInfo">
+		<![CDATA[
+			UPDATE COMPASS 
+			SET SN=#sn#
+				, UUID=#uuid#
+				, DRC=#drc#
+				, ACCRCY=#accrcy#
+				, "TIMESTAMP"=#timestamp#
+				, USEYN=#useYn#
+			WHERE SN=#sn#
+		]]>
+	</update>
+	
+	<delete id="compassiOSAPIDAO.deleteCompassInfo">
+		<![CDATA[
+			UPDATE COMPASS 
+			SET USEYN='N'
+		]]>
+	</delete>
+	
+	<select id="compassiOSAPIDAO.selectCompassInfo" resultMap="compassiOSInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, DRC, ACCRCY, "TIMESTAMP", USEYN
+			FROM COMPASS 
+			WHERE SN=#sn#
+		]]>
+	</select>
+	
+	<select id="compassiOSAPIDAO.selectCompassInfoList" parameterClass="compassiOSSearchVO" resultClass="CompassiOSAPIVO">
+
+			SELECT
+				SN, UUID, DRC, ACCRCY, "TIMESTAMP", USEYN
+			FROM COMPASS WHERE USEYN='Y'
+				
+	</select>
+	
+	<select id="compassiOSAPIDAO.selectCompassInfoListTotCnt" parameterClass="compassiOSSearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM COMPASS
+			WHERE 1=1
+			<isEqual prepend="AND" property="searchCondition" compareValue="0">
+				UUID = #searchKeyword#
+			</isEqual>
+			<isEqual prepend="AND" property="searchCondition" compareValue="1">
+				NTWRK_TYPE LIKE CONCAT('%',#searchKeyword#,'%')
+			</isEqual>
+	</select>
+
+</sqlMap>

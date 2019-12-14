@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="tabs">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <!-- page start -->
+	                <div data-role="page">
+	                
+	                    <!-- header start -->            
+					    <div data-role="header" {attr}>
+					        <h1>eGovFrame</h1>
+					        <div data-role="navbar" {iconpos}>
+	    				        <ul>
+	                                {component}
+	                            </ul>
+	                        </div>
+	                    </div>       
+					    <!-- header end -->
+					
+	                </div> 
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <li><a href="#" {attr} {css}>{text}</a></li>            
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+</generateCode>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+
+	<component id="list">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <ul data-role="listview" {attr}>
+	                    {component}
+	                </ul>            
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <li>{a-start}{compText}{a-end}</li>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+	
+    <component id="nestedList">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>            
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li>{compText}
+                        {innerComponent}
+                    </li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>	
+    
+    <component id="innerNestedList">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview">
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li>{compText}</li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>    
+	
+	<component id="numberedList">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <ol data-role="listview" {attr}>
+	                    {component}
+	                </ol>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <li>{a-start}{compText}{a-end}</li>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+	
+    <component id="splitButton">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li><a href="#">{compText}</a><a href="#">{compToolTip}</a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>
+    
+    <component id="listDivider">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr} >
+                        <li data-role="list-divider">{compText}</li>  
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li><a href="#">{compText}</a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>    
+        
+    <component id="countBubble">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li><a href="#">{compText}<span class="ui-li-count">{compInputCount}</span></a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>   
+        
+    <component id="thumbnail">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li>
+                        <a href="#">
+                            <img src="{compImage}" alt="egovframework" />
+                            {compText}
+                        </a>
+                    </li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>     
+        
+    <component id="listIcon">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li>
+                        <a href="#">
+                            <img src="{compIcon}" class="ui-li-icon" alt="egovframework" />
+                            <h3>{compText}</h3>
+                        </a>
+                    </li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>    
+
+    <component id="contentFormatting">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+					<li>
+					   <a href="#">
+					       <h3>{compTitle}</h3>
+					       <p><strong>{compSubTitle}</strong></p>
+					       <p>{compContent}</p>
+					       <p class="ui-li-aside">{compComment}</p>
+					   </a>
+					</li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>     
+        
+    <component id="searchFilterBar">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" data-filter="true" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li>{compText}</li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>         
+    
+    <component id="changeModeList">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <ul data-role="listview" {attr}>
+                        {component}
+                    </ul>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <li {swipefg} {swipeurl1} {swipeurl2}><a href="#">{compText}</a></li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>
+    
+    <component id="checkedList">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[
+                    <div data-role="controlgroup" class="checkList">
+	                    <ul data-role="listview" data-inset="true" id="checkedgroup" {attr}>	                    	
+	                        {component}	                        
+	                    </ul>
+	                </div>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[                    
+                    <li>
+						<input type="checkbox" name="checkbox-{nextval}" id="checkbox-{nextval}" value="{compText}" {checktheme}/>
+						<label for="checkbox-{nextval}">{compText}</label>
+						<div class="detailBtn"><a data-role="button" {attr} {iconpos} {btntheme} href="#">View</a></div>
+					</li>
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>
+ 
+    	
+</generateCode>

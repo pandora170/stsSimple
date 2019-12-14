@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="panel">
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	               <div {css}>
+	                   <h4>Panel</h4>
+	               </div>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+</generateCode>

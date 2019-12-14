@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+  ',' : element 순서대로 나열
+  '|' : OR
+  '?' : 0..1
+  '*' : 0..N 
+  '+' : 1..N
+  ''  : 1
+-->
+<!ELEMENT generateCode (component+)>
+  <!ELEMENT component (scriptInfo?, attributeGroup?, attributeInfo)>
+  <!ATTLIST component id CDATA #REQUIRED>
+    <!ELEMENT scriptInfo (baseHtmlTag)>
+    <!ELEMENT attributeGroup (baseHtmlTag)>
+    <!ELEMENT attributeInfo (baseHtmlTag)>
+      <!ELEMENT baseHtmlTag (#PCDATA)>

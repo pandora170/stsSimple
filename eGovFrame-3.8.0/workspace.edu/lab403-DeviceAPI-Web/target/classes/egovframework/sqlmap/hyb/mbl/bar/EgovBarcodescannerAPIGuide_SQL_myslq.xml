@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BarcodescannerHybridInfo">
+	<typeAlias  alias="BarcodescannerDevcieAPISearchVO" type="egovframework.hyb.mbl.bar.service.BarcodescannerAPIDefaultVO"/>
+	<typeAlias  alias="BarcodescannerDevcieAPIVO" type="egovframework.hyb.mbl.bar.service.BarcodescannerAPIVO"/>
+
+	<resultMap id="BarcodescannerInfo" class="egovframework.hyb.mbl.bar.service.BarcodescannerAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="codeType" column="CODE_TYPE"/>
+		<result property="codeText" column="CODE_TEXT"/>
+		<result property="useYn" column="USEYN"/>
+		<result property="sndDt" column="CODE_DT"/>						
+	</resultMap>
+	
+	<insert id="barcodescannerDeviceAPIDAO.insertBarcodescannerDevcie" >
+	    <selectKey keyProperty="sn" resultClass="int">
+		   SELECT (IFNULL(MAX(SN), 0)+1) sn from BARCODE_INFO
+		   
+		</selectKey>
+		<![CDATA[
+		INSERT INTO BARCODE_INFO
+				(SN,
+					CODE_TYPE,
+					CODE_TEXT,
+					USEYN,
+					CODE_DT)
+			VALUES ( #sn#
+				  , #codeType#
+				  , #codeText#
+				  , #useYn#
+				  , #sndDt#)
+	
+		]]>
+	</insert>
+	
+	<select id="barcodescannerDeviceAPIDAO.selectBarcodescannerDevcieList" parameterClass="BarcodescannerDevcieAPIVO" resultMap="BarcodescannerInfo">
+			SELECT
+				SN, CODE_TYPE, CODE_TEXT, USEYN, CODE_DT
+			FROM BARCODE_INFO
+			ORDER BY SN DESC
+	</select>
+	
+</sqlMap>

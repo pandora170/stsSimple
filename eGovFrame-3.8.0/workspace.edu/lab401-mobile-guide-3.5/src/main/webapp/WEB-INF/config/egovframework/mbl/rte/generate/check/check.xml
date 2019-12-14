@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="check">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<fieldset data-role="controlgroup" {attr}>
+					    <legend>선택하시오 :</legend>
+					    {component}
+					</fieldset>   
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<input type="checkbox" name="checkbox-{nextval}" id="checkbox-{nextval}" class="custom" {attr} />
+					<label for="checkbox-{nextval}">{compText}</label>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+</generateCode>

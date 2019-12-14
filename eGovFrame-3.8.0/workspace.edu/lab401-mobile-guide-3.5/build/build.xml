@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * 모바일 실행환경 배포 파일 생성
+ *
+ *  == 개정이력(Modification Information) ==
+ *   
+ *   수정일      수정자           수정내용
+ *  =======    ========    ===========================                           
+ *   2011.09.22  윤병욱          최초 생성
+ */
+-->
+<project name="MobileRTE" default="make_zip" basedir=".">
+
+	<property name="distribute_web_path" value="src/main/webapp" />
+	
+	<!-- mrte_core 배포용 zip 파일 생성 -->
+    <target name="make_zip" description="make_zip" depends="inside_distribute">
+        <delete file="./dist/mrte_core.zip" />
+        <zip destfile="./dist/mrte_core.zip">
+            <fileset dir="../src/main/webapp">
+                <include name="css/egovframework/mbl/cmm/*.css" />
+            	<include name="js/egovframework/mbl/cmm/**/*.js" />
+                <include name="images/egovframework/mbl/cmm/*.*" />
+            </fileset>
+        </zip>
+    </target>
+	
+	<!-- mrte_core 파일 내부 배포 -->
+	<target name="inside_distribute" description="inside_distribute">
+	    <antcall target="distribute">
+	        <param name="distribute_root_path" value="../../component" />
+	    </antcall>
+        <antcall target="distribute">
+            <param name="distribute_root_path" value="../../component_tutor" />
+        </antcall>
+        <antcall target="distribute">
+            <param name="distribute_root_path" value="../../template_web" />
+        </antcall>
+        <antcall target="distribute">
+            <param name="distribute_root_path" value="../../MobileRTESample" />
+        </antcall>       
+        <antcall target="distribute">
+            <param name="distribute_root_path" value="../../com_v4" />
+        </antcall>     		
+	</target>
+	
+	<!-- mrte_core 파일 내부 배포용 공통 target -->
+    <target name="distribute" description="distribute">
+
+        <copy todir="${distribute_root_path}/${distribute_web_path}" overwrite="true">
+            <fileset dir="../src/main/webapp">
+                <include name="css/egovframework/mbl/cmm/*.css" />
+                <include name="js/egovframework/mbl/cmm/**/*.js" />
+                <include name="images/egovframework/mbl/cmm/*.*" />
+            </fileset>
+        </copy>
+    	
+    </target>	
+        
+</project>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="form">
+	     
+	    <attributeGroup>
+	
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <form id="form-1" action="#" method="get">
+	                 <div data-role="content" {attr}>
+	                    {component}
+	                   </div>
+	                </form>
+	            ]]>
+	        </baseHtmlTag>
+	
+	    </attributeGroup>
+	         
+	    <attributeInfo>
+	
+	        <baseHtmlTag>
+	            <![CDATA[
+						<label for="{id}">{type} :</label>
+						<input type="{id}" id="{id}" {etc} {mini} {disabled} />
+	            ]]>
+	        </baseHtmlTag>
+	        
+	    </attributeInfo>
+	
+	</component>
+</generateCode>

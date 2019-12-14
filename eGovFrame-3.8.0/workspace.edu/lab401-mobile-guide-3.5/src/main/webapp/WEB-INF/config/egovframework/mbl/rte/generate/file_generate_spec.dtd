@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+  ',' : element 의 출력 순서
+  '?' : element 0, 1번 출력
+  '*' : element 0, 1번 이상 출력 
+  '+' : element 1번 이상 출력
+  ''  : element 1번 출력
+-->
+<!ELEMENT requestToXml (elementList)>
+<!ATTLIST requestToXml id CDATA #REQUIRED>
+  <!ELEMENT elementList (requestParameter+)>
+  <!ATTLIST elementList datetime CDATA #REQUIRED>
+    <!ELEMENT requestParameter (parameterValue+)>
+    <!ATTLIST requestParameter key CDATA #REQUIRED>
+      <!ELEMENT parameterValue (#PCDATA)>

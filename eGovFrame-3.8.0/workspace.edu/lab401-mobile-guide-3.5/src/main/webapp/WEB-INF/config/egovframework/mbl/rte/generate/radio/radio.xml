@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="radio">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[				
+	                <div data-role="fieldcontain">
+	                    <fieldset data-role="controlgroup" {attr}>
+	                        <legend>선택하시오 : </legend>
+	                        {component}
+	                    </fieldset>
+	                </div>				  
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <input type="radio" name="radio" id="radio-{nextval}" {attr} />
+	                <label for="radio-{nextval}" {attr}>{compText}</label>            
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	
+	</component>
+</generateCode>	

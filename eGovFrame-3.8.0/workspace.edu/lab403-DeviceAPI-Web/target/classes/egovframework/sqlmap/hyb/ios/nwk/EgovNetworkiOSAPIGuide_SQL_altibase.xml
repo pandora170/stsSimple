@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NetworkiOSInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="networkiOSsearchVO" type="egovframework.hyb.ios.nwk.service.NetworkiOSAPIDefaultVO"/>
+	<resultMap id="networkiOSInfo" class="egovframework.hyb.ios.nwk.service.NetworkiOSAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="networktype" column="NTWRK_TYPE"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="networkiOSAPIDAO.insertNetworkInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from NETWORK
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO NETWORK 
+				( SN
+				  , UUID
+				  , NTWRK_TYPE
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #networktype#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<update id="networkiOSAPIDAO.updateNetworkInfo">
+		<![CDATA[
+			UPDATE NETWORK 
+				SET SN = #sn#
+					, UUID = #uuid#
+					, NTWRK_TYPE = #networktype#
+					, USEYN = #useYn#
+			WHERE SN = #sn#
+		]]>
+	</update>
+	
+	<delete id="networkiOSAPIDAO.deleteNetworkInfo">
+		<![CDATA[
+			DELETE FROM NETWORK 
+			WHERE SN=#sn#
+		]]>
+	</delete>
+	
+	<select id="networkiOSAPIDAO.selectNetworkInfo" resultMap="networkiOSInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, NTWRK_TYPE, USEYN
+			FROM NETWORK 
+			WHERE SN=#sn#
+		]]>
+	</select>
+	
+	<select id="networkiOSAPIDAO.selectNetworkInfoList" parameterClass="networkiOSsearchVO" resultMap="networkiOSInfo">
+
+			SELECT
+				SN, UUID, NTWRK_TYPE, USEYN
+			FROM NETWORK
+			WHERE USEYN='Y'
+			ORDER BY SN DESC
+	</select>
+	
+</sqlMap>

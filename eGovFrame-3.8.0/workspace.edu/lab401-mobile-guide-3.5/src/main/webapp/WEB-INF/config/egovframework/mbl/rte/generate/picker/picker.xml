@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="picker">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[               
+					<!-- Datebox 관련 CSS 및 Javascript 파일을 참조해야 합니다.
+					          가이드파일을 참고하세요. -->
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<div data-role="fieldcontain">
+					    <label for="someDate">Some Date</label>
+					    <input name="someDate" id="someDate" type="date" data-role="datebox" {data-options} />
+					</div>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+	<component id="timepicker">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[               
+					    <!-- Datebox 관련 CSS 및 Javascript 파일을 참조해야 합니다.
+					          가이드파일을 참고하세요. -->
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<div data-role="fieldcontain">
+					    <label for="someDate">Some Time</label>
+					    <input name="someDate" id="someDate" type="date" data-role="datebox" {data-options} />
+					</div>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>	
+</generateCode>

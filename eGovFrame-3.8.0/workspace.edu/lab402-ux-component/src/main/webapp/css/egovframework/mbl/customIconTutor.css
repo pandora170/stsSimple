@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.ui-icon-beer:after {
+	background-image: url(/images/egovframework/mbl/beer.png);
+	background-repeat: no-repeat;
+}

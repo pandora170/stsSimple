@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="selector">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[				
+					<div data-role="fieldcontain">
+					    <label for="select-choice-1" class="select">선택 하시오:</label>
+					    <select name="select-choice-1" id="select-choice-1" {attr}>
+					     {component}
+					    </select>
+					</div>		  
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					{innerComponent}
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+
+    <component id="innerSelectorOptions">
+        <attributeGroup>
+            <baseHtmlTag>
+                <![CDATA[               
+                    <optgroup label="{groupTitle}">
+                         {component}
+                    </optgroup>
+                ]]>
+            </baseHtmlTag>
+        </attributeGroup>
+        <attributeInfo>
+            <baseHtmlTag>
+                <![CDATA[
+                    <option value="option-{nextval}" {attr}>{text}</option>          
+                ]]>
+            </baseHtmlTag>
+        </attributeInfo>
+    </component>
+    	
+	<component id="switch">
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+					<div data-role="fieldcontain">
+						<label for="slider">선택하시오 :</label>
+						<select name="slider" id="slider" data-role="slider" {attr}>
+							<option value="off">Off</option>
+							<option value="on">On</option>
+						</select>
+					</div>         
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>	
+</generateCode>

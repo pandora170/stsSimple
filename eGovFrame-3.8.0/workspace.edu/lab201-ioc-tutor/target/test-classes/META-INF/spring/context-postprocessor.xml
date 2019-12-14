@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+				http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<!-- BeanFactory 후처리기 테스트 - SampleBeanFactoryPostProcessor - 전체 bean 이름 출력 -->
+	<bean class="egovframework.lab.ioc.postprocess.SampleBeanFactoryPostProcessor" />
+
+	<!--
+		CGLib 을 사용한 proxy 자동 생성을 위한 설정 
+		ex.) AnnotationBeanLifeCycleSample 은 Interface 없는 POJO 클래스인데 이에 대해 DebugAdvisor 를 달아주려면 CGLib 으로 Proxy 처리되어야 함.
+	-->
+	<aop:config proxy-target-class="true" />
+
+	<!--
+		debugAdvisor 에 제공될 advice 로 Spring 에서 기본 제공하는
+		CustomizableTraceInterceptor 설정 대상 메서드 진입, 종료 또는 exception 발생 시 관련 상세
+		내역을 로깅함. - 아래의 placeholder 들을 확인할 것.
+	-->
+	<bean id="customizableTraceInterceptor" class="org.springframework.aop.interceptor.CustomizableTraceInterceptor">
+		<property name="enterMessage" value="★ Entering - $[targetClassShortName].$[methodName] ( arguments type : $[argumentTypes] , value : $[arguments] )" />
+		<property name="exceptionMessage" value="★ Exception - $[targetClassShortName].$[methodName]  ( exception : $[exception] )" />
+		<property name="exitMessage" value="★ Exiting - $[targetClassShortName].$[methodName] ( returns : $[returnValue] ) , Time($[invocationTime])" />
+	</bean>
+
+	<!-- Advice 와 Pointcut 을 함께 가지는 Advisor 중 기본이 되는 DefaultPointcutAdvisor 설정 -->
+	<bean id="debugAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="advice" ref="customizableTraceInterceptor" />
+		<!-- 여기서 Pointcut 을 설정하지 않으므로 기본으로 Pointcut.TRUE 에 의해 TruePointCut (모든 class 에 매칭됨) 이 설정됨 -->
+	</bean>
+
+	<!-- Bean 후처리기 테스트 - @Debug 가 달려있는 메서드를 가지는 bean 의 해당 클래스/메서드 에 대해 debugAdvisor 의 Pointcut 으로 추가함 -->
+	<bean class="egovframework.lab.ioc.postprocess.SampleBeanPostProcessor" />
+
+</beans>

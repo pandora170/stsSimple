@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.ui-icon-[파일명] {
+	background-image: url([이미지 경로]);
+	background-repeat: no-repeat;
+}

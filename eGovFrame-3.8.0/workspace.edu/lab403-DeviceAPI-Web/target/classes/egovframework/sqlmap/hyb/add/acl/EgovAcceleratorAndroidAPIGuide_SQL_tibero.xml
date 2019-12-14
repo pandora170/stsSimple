@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AcceleratorAndroidInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="acceleratorAndroidSearchVO" type="egovframework.hyb.add.acl.service.AcceleratorAndroidAPIDefaultVO"/>
+	<typeAlias  alias="acceleratorAndroidAPIVO" type="egovframework.hyb.add.acl.service.AcceleratorAndroidAPIVO"/>
+
+	<resultMap id="acceleratorAndroidInfo" class="egovframework.hyb.add.acl.service.AcceleratorAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="xaxis" column="XAXIS"/>
+		<result property="yaxis" column="YAXIS"/>
+		<result property="zaxis" column="ZAXIS"/>
+		<result property="timestamp" column="TIMESTAMP"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="acceleratorAndroidAPIDAO.insertAcceleratorInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from ACCELERATOR
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO ACCELERATOR 
+				( SN
+				  , UUID
+				  , XAXIS
+				  , YAXIS
+				  , ZAXIS
+				  , TIMESTAMP
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #xaxis#
+				  , #yaxis#
+				  , #zaxis#
+				  , #timestamp#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<update id="acceleratorAndroidAPIDAO.updateAcceleratorInfo">
+		<![CDATA[
+			UPDATE ACCELERATOR 
+			SET SN=#sn#
+				, UUID=#uuid#
+				, XAXIS=#xaxis#
+				, YAXIS=#yaxis#
+				, ZAXIS=#zaxis#
+				, TIMESTAMP=#timestamp#
+				, USEYN=#useYn#
+			WHERE SN=#sn#
+		]]>
+	</update>
+	
+	<delete id="acceleratorAndroidAPIDAO.deleteAcceleratorInfo">
+		<![CDATA[
+			UPDATE ACCELERATOR 
+			SET USEYN='N'
+		]]>
+	</delete>
+	
+	<select id="acceleratorAndroidAPIDAO.selectAcceleratorInfo" resultMap="acceleratorAndroidInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, XAXIS, YAXIS, ZAXIS, TIMESTAMP, USEYN
+			FROM ACCELERATOR 
+			WHERE SN=#sn#
+		]]>
+	</select>
+	
+	<select id="acceleratorAndroidAPIDAO.selectAcceleratorInfoList" parameterClass="acceleratorAndroidSearchVO" resultClass="acceleratorAndroidAPIVO">
+
+			SELECT
+				SN, UUID, XAXIS, YAXIS, ZAXIS, TIMESTAMP, USEYN
+			FROM ACCELERATOR WHERE USEYN='Y'
+				
+	</select>
+	
+	<select id="acceleratorAndroidAPIDAO.selectAcceleratorInfoListTotCnt" parameterClass="acceleratorAndroidSearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM ACCELERATOR
+			WHERE 1=1
+			<isEqual prepend="AND" property="searchCondition" compareValue="0">
+				UUID = #searchKeyword#
+			</isEqual>
+			<isEqual prepend="AND" property="searchCondition" compareValue="1">
+				NTWRK_TYPE LIKE CONCAT('%',#searchKeyword#,'%')
+			</isEqual>
+	</select>
+
+</sqlMap>

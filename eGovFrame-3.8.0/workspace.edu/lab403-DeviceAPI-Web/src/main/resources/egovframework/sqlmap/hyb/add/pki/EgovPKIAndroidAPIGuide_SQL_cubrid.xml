@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PKIAndroidInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="PKIAndroidSearchVO" type="egovframework.hyb.add.pki.service.PKIAndroidAPIDefaultVO"/>
+	<typeAlias  alias="PKIAndroidAPIVO" type="egovframework.hyb.add.pki.service.PKIAndroidAPIVO"/>
+
+	<resultMap id="PKIAndroidInfo" class="egovframework.hyb.add.pki.service.PKIAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="dn" column="DN"/>
+		<result property="crtfcDt" jdbcType="DATETIME" javaType="java.sql.Date"/>
+		<result property="entrprsSeCode" column="ENTRPRS_SE_CODE"/>
+	</resultMap>
+	
+	<insert id="PKIAndroidAPIDAO.insertPKIInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from pki		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO pki 
+				( SN
+				  , UUID
+				  , DN
+				  , CRTFC_DT
+				  , ENTRPRS_SE_CODE)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #dn#
+				  , SYSDATETIME
+				  , #entrprsSeCode#)
+		]]>
+	</insert>
+	
+	<select id="PKIAndroidAPIDAO.selectPKIInfoList" parameterClass="PKIAndroidSearchVO" resultClass="PKIAndroidAPIVO">
+
+			SELECT
+				SN, UUID, DN, 
+				CRTFC_DT CRTFCDT, ENTRPRS_SE_CODE ENTRPRSSECODE
+			FROM pki
+			ORDER BY SN DESC				
+	</select>
+		
+	<select id="PKIAndroidAPIDAO.selectPKIInfoListTotCnt" parameterClass="PKIAndroidSearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM pki
+	</select>
+		
+</sqlMap>

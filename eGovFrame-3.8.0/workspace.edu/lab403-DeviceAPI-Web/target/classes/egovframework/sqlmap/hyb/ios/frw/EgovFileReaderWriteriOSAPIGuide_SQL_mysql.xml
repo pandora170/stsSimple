@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FileReaderWriteriOS">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="fileReaderWriteriOSVO" type="egovframework.hyb.ios.frw.service.FileReaderWriteriOSAPIVO"/> 
+ 	
+	<insert id="fileReaderWriteriOSAPIDAO.insertFileInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (IFNULL(MAX(SN), 0)+1) SN FROM FILE_READER_WRITE
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO FILE_READER_WRITE
+				( SN
+				  , UUID
+				  , FILE_SN
+				  , FILE_NM
+				  , FILE_COURS
+				  , FILE_TYPE
+				  , UPDT_DT
+				  , FILE_SIZE
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #fileSn#
+				  , #fileNm#
+				  , #fileStreCours#
+				  , #fileType#
+				  , SYSDATE()
+				  , #fileSize#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	
+	<insert id="fileReaderWriteriOSAPIDAO.insertFileDetailInfo">
+		
+		<![CDATA[
+			INSERT INTO FILE_DETAIL_INFO
+				( FILE_SN
+				  , FILE_STRE_COURS
+				  , STRE_FILE_NM
+				  , ORIGNL_FILE_NM
+				  , FILE_EXTSN
+				  , FILE_CN
+				  , FILE_SIZE )
+			VALUES ( #fileSn#
+				  , #fileStreCours#
+				  , #streFileNm#
+				  , #orignlFileNm#
+				  , #fileExtsn#
+				  , #fileCn#
+				  , #fileSize#)
+		]]>
+	</insert>
+	<select id="fileReaderWriteriOSAPIDAO.selectFileInfoList" resultClass="egovMap">
+
+			SELECT
+				SN, UUID, FILE_SN, FILE_NM, FILE_COURS, FILE_TYPE, UPDT_DT, FILE_SIZE, USEYN
+			FROM FILE_READER_WRITE
+			WHERE USEYN='Y' AND UUID = #uuid#
+			ORDER BY SN DESC
+	</select>
+	
+	<select id="fileReaderWriteriOSAPIDAO.selectFileInfo" resultClass="fileReaderWriteriOSVO">
+
+			SELECT
+				A.SN, A.UUID, A.FILE_SN fileSn, A.FILE_NM, A.FILE_COURS, A.FILE_TYPE, A.UPDT_DT, A.FILE_SIZE, A.USEYN,
+				B.STRE_FILE_NM streFileNm, B.ORIGNL_FILE_NM orignlFileNm
+			FROM FILE_READER_WRITE A JOIN FILE_DETAIL_INFO B USING(FILE_SN)
+			WHERE USEYN='Y' AND UUID = #uuid# AND FILE_SN = #fileSn#
+			ORDER BY SN DESC
+	</select>
+	
+	<delete id="fileReaderWriteriOSAPIDAO.deleteFileInfo">
+		<![CDATA[
+			DELETE FROM FILE_READER_WRITE 
+			WHERE UUID = #uuid# AND FILE_SN = #fileSn#
+		]]>
+	</delete>
+	
+	<delete id="fileReaderWriteriOSAPIDAO.deleteFileDetailInfo">
+		<![CDATA[
+			DELETE FROM FILE_DETAIL_INFO 
+			WHERE FILE_SN = #fileSn#
+		]]>
+	</delete>
+	
+
+</sqlMap>

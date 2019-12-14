@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="button">
+	    <attributeGroup>
+	        <baseHtmlTag>
+	            <![CDATA[<div data-role="controlgroup" {attr}>{component}</div>]]>
+	        </baseHtmlTag>
+	    </attributeGroup>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[<a href="#" data-role="button" {attr} {css}>{text}</a>]]>
+	        </baseHtmlTag>
+	    </attributeInfo>
+	</component>
+</generateCode>

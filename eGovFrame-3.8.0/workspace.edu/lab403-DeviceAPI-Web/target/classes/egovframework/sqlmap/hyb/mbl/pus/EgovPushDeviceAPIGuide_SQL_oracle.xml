@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PushHybridInfo">
+
+	<typeAlias  alias="pushDevcieAPISearchVO" type="egovframework.hyb.mbl.pus.service.PushDeviceAPIDefaultVO"/>
+	<typeAlias  alias="pushDevcieAPIVO" type="egovframework.hyb.mbl.pus.service.PushDeviceAPIVO"/>
+
+	<resultMap id="pushDeviceAPIInfo" class="egovframework.hyb.mbl.pus.service.PushDeviceAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="osType" column="OS_TYPE"/>
+		<result property="tokenId" column="TOKEN_ID"/>
+	</resultMap>
+	
+	<resultMap id="pushMessageInfo" class="egovframework.hyb.mbl.pus.service.PushDeviceAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="tokenId" column="TOKEN_ID"/>
+		<result property="message" column="MESSAGE"/>
+		<result property="sndDt" column="SND_DT"/>
+	</resultMap>
+
+	<insert id="pushDeviceAPIDAO.insertPushDevice">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from PUSH_DEVICE
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO PUSH_DEVICE
+				(SN,
+					UUID,
+					NTWRK_DEVICE_INFO,
+					OS_VER,
+					DEVICE_NM,
+					USEYN,
+					OS_TYPE,
+					TOKEN_ID)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #ntwrkDeviceInfo#
+				  , #osVer#
+				  , #deviceNm#
+				  , #useYn#
+				  , #osType#
+				  , #tokenId#)
+		]]>
+	</insert>
+
+		<insert id="pushDeviceAPIDAO.insertVibratorInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from PUSH_MESSAGE
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO PUSH_MESSAGE
+				(SN,
+					UUID,
+					MESSAGE,
+					SND_DT,
+					TOKEN_ID,
+					osType)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #message#
+				  , #sndDt#
+				  , #tokenId#
+				  , #osType#)
+		]]>
+	</insert>
+	
+	<select id="pushDeviceAPIDAO.selectPushDeviceList" parameterClass="pushDevcieAPISearchVO" resultMap="pushDeviceAPIInfo">
+			SELECT
+				SN, UUID, OS_TYPE, TOKEN_ID
+			FROM PUSH_DEVICE
+			ORDER BY SN DESC
+	</select>
+	
+	<select id="pushDeviceAPIDAO.selectPushDevice" parameterClass="pushDevcieAPIVO" resultMap="pushDeviceAPIInfo">
+			SELECT
+				SN, UUID, OS_TYPE, TOKEN_ID
+			FROM PUSH_DEVICE
+			where SN = #sn#
+			ORDER BY SN DESC
+	</select>
+	
+	<select id="pushDeviceAPIDAO.selectPushMessageList" parameterClass="pushDevcieAPIVO" resultMap="pushMessageInfo">
+			SELECT
+				SN, UUID, MESSAGE, SND_DT, TOKEN_ID
+			FROM PUSH_MESSAGE
+			ORDER BY SN DESC
+	</select>
+
+</sqlMap>

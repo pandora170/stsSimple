@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="JailbreakDetectionHybridInfo">
+	<typeAlias  alias="JailbreakDetectionDevcieAPISearchVO" type="egovframework.hyb.mbl.jai.service.JailbreakDetectionDeviceAPIDefaultVO"/>
+	<typeAlias  alias="JailbreakDetectionDevcieAPIVO" type="egovframework.hyb.mbl.jai.service.JailbreakDetectionDeviceAPIVO"/>
+
+	<resultMap id="JailbreakDetectionInfo" class="egovframework.hyb.mbl.jai.service.JailbreakDetectionDeviceAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="os" column="OS"/>
+		<result property="pgVer" column="PG_VER"/>
+		<result property="detection" column="DETECTION"/>						
+	</resultMap>
+	
+	<insert id="jailbreakDetectionDeviceAPIDAO.insertJailbreakDetectionDevcie" >
+	    <selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from DETECTION
+		   
+		</selectKey>
+		<![CDATA[
+		INSERT INTO DETECTION
+				(SN,
+					UUID,
+					OS,
+					PG_VER,
+					DETECTION)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #os#
+				  , #pgVer#
+				  , #detection#)
+	
+		]]>
+	</insert>
+	
+	<select id="jailbreakDetectionDeviceAPIDAO.selectJailbreakDetectionDevcieList" parameterClass="JailbreakDetectionDevcieAPIVO" resultMap="JailbreakDetectionInfo">
+			SELECT
+				SN, UUID, OS, PG_VER, DETECTION
+			FROM DETECTION
+			ORDER BY SN DESC
+	</select>
+	
+</sqlMap>

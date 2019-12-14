@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FileOpenerHybridInfo">
+
+	<typeAlias  alias="fileOpenerDevcieAPISearchVO" type="egovframework.hyb.mbl.fop.service.FileOpenerDeviceAPIVO"/>
+
+	<resultMap id="documentList" class="egovframework.hyb.mbl.fop.service.FileOpenerDeviceAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="streFileNm" column="STRE_FILE_NM"/>
+		<result property="orignlFileNm" column="ORIGNL_FILE_NM"/>		
+		<result property="updDt" column="UPD_DT"/>		
+		<result property="fileSize" column="FILE_SIZE"/>
+	</resultMap>
+	
+	<select id="fileOpenerDeviceAPIDAO.selectDocumentListInfo" parameterClass="fileOpenerDevcieAPISearchVO" resultMap="documentList">
+		SELECT
+			a.SN,			
+			a.UPD_DT,
+    		b.STRE_FILE_NM, 
+    		b.ORIGNL_FILE_NM,
+    		b.FILE_SIZE
+		FROM 
+			file_opener_list a, FILE_DETAIL_INFO b
+		WHERE a.FILE_SN = b.FILE_SN
+    		AND a.USE_YN = 'Y'
+    	ORDER BY a.UPD_DT DESC
+	</select>
+
+</sqlMap>

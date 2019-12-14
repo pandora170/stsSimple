@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CameraAndroidPhotoAlbum">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+	<resultMap id="cameraAndroidPhotoAlbum" class="egovframework.hyb.add.cmr.service.CameraAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="photoSj" column="PHOTO_SJ"/>
+		<result property="fileSn" column="FILE_SN"/>
+	</resultMap>
+	
+	<resultMap id="cameraAndroidPhotoAlbumFile" class="egovframework.hyb.add.cmr.service.CameraAndroidAPIFileVO">
+		<result property="sn" column="SN"/>
+		<result property="photoSj" column="PHOTO_SJ"/>
+		<result property="fileSn" column="FILE_SN"/>
+		<result property="fileStreCours" column="FILE_STRE_COURS"/>
+		<result property="streFileNm" column="STRE_FILE_NM"/>
+	</resultMap>
+	
+	<resultMap id="cameraAndroidPhotoAlbumImageFile" class="egovframework.hyb.add.cmr.service.CameraAndroidAPIFileVO">
+		<result property="fileSn" column="FILE_SN"/>
+		<result property="fileStreCours" column="FILE_STRE_COURS"/>
+		<result property="streFileNm" column="STRE_FILE_NM"/>
+		<result property="fileExtsn" column="FILE_EXTSN"/>
+	</resultMap>
+	
+	<resultMap id="cameraAndroidPhotoAlbumSn" class="egovframework.hyb.add.cmr.service.CameraAndroidAPIFileVO">
+		<result property="sn" column="SN"/>
+	</resultMap>
+	
+	<insert id="cameraAndroidAPIDAO.insertCameraPhotoAlbum">
+	    <selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from CAMERA		   
+		</selectKey>
+		<![CDATA[	
+	    	INSERT INTO CAMERA 
+				( SN
+				  , UUID
+				  , PHOTO_SJ
+				  , FILE_SN 
+				  , USEYN)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #photoSj#
+				  , #fileSn#
+				  , #useyn#)
+		]]>	
+	</insert>
+	
+	<insert id="cameraAndroidAPIDAO.insertCameraPhotoAlbumFile">
+	    <selectKey keyProperty="fileSn" resultClass="int">
+		   SELECT (NVL(MAX(FILE_SN), 0)+1) fileSn from FILE_DETAIL_INFO		   
+		</selectKey>
+		<![CDATA[	
+	    	INSERT INTO FILE_DETAIL_INFO
+				( FILE_SN
+				  , FILE_STRE_COURS
+				  , STRE_FILE_NM
+				  , ORIGNL_FILE_NM
+				  , FILE_EXTSN
+				  , FILE_CN
+				  , FILE_SIZE )
+			VALUES ( #fileSn#
+				  , #fileStreCours#
+				  , #streFileNm#
+				  , #orignlFileNm#
+				  , #fileExtsn#
+				  , #fileCn#
+				  , #fileSize#)
+		]]>	
+	</insert>
+	
+	<update id="cameraAndroidAPIDAO.updateCameraPhotoAlbumFile">
+		<![CDATA[
+			UPDATE	CAMERA SET
+				  FILE_SN = #fileSn#
+ 			WHERE  SN = #sn#
+		]]>
+	</update>
+	
+	<delete id="cameraAndroidAPIDAO.deleteCameraPhotoAlbumInfo">
+		<![CDATA[
+			DELETE FROM CAMERA
+			WHERE SN = #sn#
+		]]>
+	</delete>
+	
+	<delete id="cameraAndroidAPIDAO.deleteCameraPhotoAlbumInfoFile">
+		<![CDATA[
+			DELETE FROM FILE_DETAIL_INFO
+			WHERE FILE_SN = #fileSn#
+		]]>
+	</delete>
+	
+	<select id="cameraAndroidAPIDAO.selectCameraPhotoAlbumInfo" resultMap="cameraAndroidPhotoAlbum">
+		<![CDATA[
+			SELECT
+				SN, FILE_SN, PHOTO_SJ
+			FROM CAMERA
+			WHERE SN = #sn#
+		]]>
+	</select>
+	
+	<select id="cameraAndroidAPIDAO.selectCameraPhotoAlbumInfoList" resultMap="cameraAndroidPhotoAlbumFile">
+		<![CDATA[	
+	    	SELECT TBL.*
+			FROM	(SELECT
+						A.SN, A.PHOTO_SJ, A.FILE_SN, B.FILE_STRE_COURS, B.STRE_FILE_NM
+						FROM CAMERA A JOIN FILE_DETAIL_INFO B ON A.FILE_SN = B.FILE_SN
+						ORDER BY A.FILE_SN DESC
+						) TBL
+			WHERE ROWNUM BETWEEN #pageIndex# AND #pageIndex# + #recordCountPerPage#
+		]]>	
+	</select>
+	
+	<select id="cameraAndroidAPIDAO.selectImageFileInfo" resultMap="cameraAndroidPhotoAlbumImageFile">
+		<![CDATA[	
+	    	SELECT
+				FILE_SN, FILE_STRE_COURS, STRE_FILE_NM, FILE_EXTSN
+			FROM FILE_DETAIL_INFO
+			WHERE FILE_SN = #fileSn#
+		]]>	
+	</select>
+	
+	<select id="cameraAndroidAPIDAO.selectCameraPhotoAlbumPhotoSj" resultMap="cameraAndroidPhotoAlbumSn">
+		<![CDATA[	
+	    	SELECT
+				SN
+			FROM CAMERA
+			WHERE PHOTO_SJ = #photoSj#
+		]]>	
+	</select>
+</sqlMap>

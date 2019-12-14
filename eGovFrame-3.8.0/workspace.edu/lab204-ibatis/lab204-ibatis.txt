@@ -1,0 +1,360 @@
+실습환경 구성
+ - lab204-ibatis 프로젝트 import
+ - maven repository 설정 및 dependency library 맞춤
+
+Step 1. 구동 환경 설정
+
+ 1) Hsqldb 초기화 스크립트
+	. /lab204-ibatis/src/test/resources/META-INF/testdata/sample_schema_hsql.sql 를 확인한다.
+	현 실습 프로젝트에서는 편의상 매 테스트 케이스 재실행 시 관련 table 을 drop/create 하고 있음.
+	
+ *2) dataSource 설정
+ 	. /lab204-ibatis/src/test/resources/META-INF/spring/context-datasource.xml 에 dataSource 빈을 정의한다.
+	/**************************************************************************************/
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="url" value="${db.dburl}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+		<property name="defaultAutoCommit" value="false" />
+		<property name="poolPreparedStatements" value="true" />
+	</bean>
+ 	/**************************************************************************************/
+
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-common.xml 에 context:property-placeholder 설정을 추가한다.
+	/**************************************************************************************/
+	<context:property-placeholder location="classpath:/META-INF/spring/jdbc.properties" />
+	/**************************************************************************************/
+
+	. /lab204-ibatis/src/test/resources/META-INF/spring/jdbc.properties 를 작성한다.
+	/**************************************************************************************/
+	
+db.driver=org.hsqldb.jdbcDriver
+db.dburl=jdbc:hsqldb:mem:testdb
+#db.dburl=jdbc:hsqldb:hsql://localhost/sampledb
+db.username=sa
+db.password=
+
+	/**************************************************************************************/
+	. cf.) 위에서 기본으로 memory DB 형식으로 자동 구동하도록 되어 있으나 dburl=jdbc:hsqldb:hsql://localhost/sampledb 과 같이 변경시에는 
+	  /lab204-ibatis/db 상에서 (외부 탐색기에서) runHsqlDB.cmd 를 실행하여 DB Server 를 구동하고 테스트할 수도 있다.
+
+	테스트 시에는 Spring에서 제공하는 Embedded DB를 이용하는 것이 더 간편하다.
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-datasource.xml 를 설정한다.
+	/**************************************************************************************/
+	<jdbc:embedded-database id="dataSource" type="HSQL">
+		<jdbc:script location= "META-INF/testdata/sample_schema_hsql.sql"/>
+	</jdbc:embedded-database>
+	/**************************************************************************************/
+
+ *3) transaction 설정
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-transaction.xml 를 작성한다.
+	/**************************************************************************************/
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource" ref="dataSource"/>
+	</bean>
+	/**************************************************************************************/
+	. cf.) 여기서는 transaction manager 만을 설정하였고, TestCase 내에서 전역 @Transactional 설정으로 트랜잭션을 일괄 지정하고 있으나 보통 AOP 형식(tx:aop)의 트랜잭션 대상 지정으로 비즈니스 서비스의 메서드에 일괄 지정하는 경우가 많다. cf2.) @Transactional Annotation 으로 대상 메서드에 개별로 따로 지정할 수도 있다.
+
+ *4) Spring 의 iBATIS 연동 설정
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-sqlMap.xml 를 작성한다. 
+	/**************************************************************************************/
+	<!-- SqlMap setup for iBATIS Database Layer -->
+	<bean id="sqlMapClient" class="egovframework.rte.psl.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation"
+			value="classpath:/META-INF/sqlmap/sql-map-config.xml" />
+		<!-- 
+		<property name="mappingLocations"
+			value="classpath:/META-INF/sqlmap/mappings/lab-*.xml" />
+		 -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	/**************************************************************************************/
+	. 최신 프레임워크 환경에서는 sql-map-config.xml 내에 개별 sql 맵핑 파일일 일일이 지정하는 것이 아니라 위의 mappingLocations 영역을 주석 해제하여 Spring 의 ResourceLoader 형식으로 패턴 매칭에 의거한 일괄 로딩으로 처리가 가능하다. (단, 테스트 결과 CacheModel 등의 일부 기능에서 문제가 발생하는 경우가 있으므로 사용에 유의할것!!)
+
+  *5) iBATIS 의 sql-map-config 설정 파일 작성
+	. /lab204-ibatis/src/test/resources/META-INF/sqlmap/sql-map-config.xml 를 작성한다.
+	/**************************************************************************************/
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+	
+	<sqlMapConfig>
+	<!-- TODO [Step 1-5] iBATIS 의 sql-map-config 설정 파일 작성 -->
+	
+		<settings useStatementNamespaces="false" cacheModelsEnabled="true" />
+			
+		<!-- Spring 2.5.5 이상, iBATIS 2.3.2 이상에서는 iBATIS 연동을 위한 SqlMapClientFactoryBean 정의 시 mappingLocations 속성으로 
+		     Sql 매핑 파일의 일괄 지정이 가능하다. 
+		     ("sqlMapClient" bean 설정 시  mappingLocations="classpath:/META-INF/sqlmap/mappings/lab-*.xml" 로 지정하였음)
+			  단, sql-map-config-2.dtd 에서 sqlMap 요소를 하나 이상 지정하도록 되어 있으므로 아래의 dummy 매핑 파일을 설정한다.
+		-->
+		<sqlMap resource="META-INF/sqlmap/mappings/lab-dummy.xml" />
+		<sqlMap resource="META-INF/sqlmap/mappings/lab-emp.xml" />
+		<sqlMap resource="META-INF/sqlmap/mappings/lab-emp-cachemodel.xml" />
+	</sqlMapConfig>
+	/**************************************************************************************/
+
+ 6) Id Generation Service 설정 확인
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-idgen.xml 를 확인한다.
+	/**************************************************************************************/
+	<bean name="primaryTypeSequenceIds"
+		class="egovframework.rte.fdl.idgnr.impl.EgovSequenceIdGnrService"
+		destroy-method="destroy">
+		<property name="dataSource" ref="dataSource" />
+		<property name="query" value="SELECT NEXT VALUE FOR empseq FROM DUAL" />
+	</bean>
+	/**************************************************************************************/
+	. 여기서는 Hsqldb 를 사용하여 Oracle 의 DUAL 테이블 역할을 할 수 있도록 초기화 스크립트 sql 에 create 하였으며, DB Sequence 기반의 Id Generation 을 사용한 예이다. (위에서 select next value for seq_id from xx 는 Hsqldb 의 특화된 sequence 사용 문법임에 유의!)
+
+ 7) common 설정 확인
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-common.xml 를 확인한다.
+	/**************************************************************************************/
+		<!-- PropertyPlaceholderConfigurer 설정 -->
+		..
+		<!-- MessageSource 설정 -->
+		..
+		<!-- 전자정부 TraceHandler 설정 관련 -->
+		..
+		<!-- 스테레오 타입 Annotation 을 인식하여 Spring bean 으로 자동 등록하기 위한 component-scan 설정 -->
+		..
+	/**************************************************************************************/
+	. 외부 properties 파일을 Container 구동 시 미리 Spring Bean 설정 파일의 속성값으로 대체하여 처리해주는 PropertyPlaceholderConfigurer 설정
+	. Locale 에 따른 다국어 처리를 쉽게 해주는 messageSource 설정. 여기서는 전자정부 실행환경의 id generation 서비스와 properties 서비스의 메시지 파일과 업무 어플리케이션을 위한 사용자 메시지(/message/message-common - message-common_en_US.properties, message-common_ko_KR.properties 를 확인할 것) 를 지정하였다.
+	. exception 처리 Handler 와 유사하게 특정한 상황에서 사용자가 Trace Handler 를 지정하여 사용할 수 있도록 전자정부 프레임워크에서 가이드하고 있는 TraceHandler 설정
+	. component-scan 설정
+
+ 8) aspect 설정 확인
+	. /lab204-ibatis/src/test/resources/META-INF/spring/context-aspect.xml를 확인한다.
+	/**************************************************************************************/
+	<aop:config>
+		<aop:pointcut id="serviceMethod"
+			expression="execution(* egovframework.lab..impl.*Impl.*(..))" />
+
+		<aop:aspect ref="exceptionTransfer">
+			<aop:after-throwing throwing="exception"
+				pointcut-ref="serviceMethod" method="transfer" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="exceptionTransfer" class="egovframework.rte.fdl.cmmn.aspect.ExceptionTransfer">
+		<property name="exceptionHandlerService">
+			<list>
+				<ref bean="defaultExceptionHandleManager" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="defaultExceptionHandleManager"
+		class="egovframework.rte.fdl.cmmn.exception.manager.DefaultExceptionHandleManager">
+		<property name="reqExpMatcher" ref="antPathMater" />
+		<property name="patterns">
+			<list>
+				<value>**service.impl.*</value>
+			</list>
+		</property>
+		<property name="handlers">
+			<list>
+				<ref bean="egovHandler" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="egovHandler"
+		class="egovframework.lab.dataaccess.common.JdbcLoggingExcepHndlr" />
+	/**************************************************************************************/
+	. Spring AOP(xml 설정 방식) 를 사용하여 비지니스 메서드에서 exception 이 발생한 경우 일괄적으로 ExceptionTransfer 의 transfer 메서드 기능(Advice) 를 수행해 주게 됨. --> Exception logging 및 BizException 형태로 wrapping 하여 재처리하는 Exception 공통처리 후 ExceptionHandleManager 에 의해 관리(설정) 되는 Handler (ex. exception 내용을 메일링 한더던지.. 사용자 구현 가능) 가 자동적으로 추가 수행될 수 있음.
+
+
+==================================================================
+ Step 2. iBatis 활용을 자바클래스 작성 
+
+ *1) Service Interface 확인
+     /lab204-ibatis/src/main/java/egovframework/lab/dataaccess/service/EmpService.java 를 확인한다.
+     
+ *2) VO 확인
+     /lab204-ibatis/src/main/java/egovframework/lab/dataaccess/service/EmpVO.java 를 확인한다.
+     
+
+ *3) Annotation 을 적용한 Impl
+	. /lab204-ibatis/src/main/java/egovframework/lab/dataaccess/service/impl/EmpServiceImpl.java에 아래 내용을 추가한다.
+	/**************************************************************************************/
+            @Resource(name = "primaryTypeSequenceIds")
+            EgovIdGnrService egovIdGnrService;
+        
+            @Resource(name = "empDAO")
+            private EmpDAO empDAO;          
+	/**************************************************************************************/
+
+ *4) DAO 작성
+	. /lab204-ibatis/src/main/java/egovframework/lab/dataaccess/service/impl/EmpDAO.java 를 작성한다. 
+	/**************************************************************************************/
+        @Repository("empDAO")
+        public class EmpDAO extends EgovAbstractDAO {
+	        
+		   	public void insertEmp(EmpVO vo) {
+		        insert("insertEmp", vo);
+		    }
+		
+		    public int updateEmp(EmpVO vo) {
+		        return update("updateEmp", vo);
+		    }
+		
+		    public int deleteEmp(EmpVO vo) {
+		        return delete("deleteEmp", vo);
+		    }
+		
+		    public EmpVO selectEmp(EmpVO vo) {
+		        return (EmpVO) selectByPk("selectEmp", vo);
+		        //return (EmpVO) selectByPk("selectEmpUsingCacheModelLRU", vo);
+		    }
+		
+		    @SuppressWarnings("unchecked")
+		    public List<EmpVO> selectEmpList(EmpVO searchVO) {
+		        return (List<EmpVO>) list("selectEmpList", searchVO);
+		    }
+        }
+	/**************************************************************************************/
+
+ *5) mapping xml 작성
+ 	. /lab204-ibatis/src/test/resources/META-INF/sqlmap/mappings/lab-emp.xml 를 작성한다.
+	/**************************************************************************************/
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+	<sqlMap namespace="Emp">
+	<!-- TODO [Step 2-5] lab-emp.xml mapping xml 작성 -->
+	
+		<typeAlias alias="empVO" type="egovframework.lab.dataaccess.service.EmpVO" />
+	
+		<resultMap id="empResult" class="empVO">
+			<result property="empNo" column="EMP_NO" />
+			<result property="empName" column="EMP_NAME" />
+			<result property="job" column="JOB" />
+			<result property="mgr" column="MGR" />
+			<result property="hireDate" column="HIRE_DATE" />
+			<result property="sal" column="SAL" />
+			<result property="comm" column="COMM" />
+			<result property="deptNo" column="DEPT_NO" />
+		</resultMap>
+	
+		<insert id="insertEmp" parameterClass="empVO">
+			<![CDATA[
+				insert into EMP
+						   (EMP_NO,
+							EMP_NAME,
+							JOB,
+							MGR,
+							HIRE_DATE,
+							SAL,
+							COMM,
+							DEPT_NO)
+				values	   (#empNo#,
+							#empName#,
+							#job#,
+							#mgr#,
+							#hireDate#,
+							#sal#,
+							#comm#,
+							#deptNo#)
+			]]>
+		</insert>
+	
+		<update id="updateEmp" parameterClass="empVO">
+			<![CDATA[
+				update EMP
+				   set EMP_NAME		= #empName#,
+					   JOB 			= #job#,
+					   MGR 			= #mgr#,
+					   HIRE_DATE 	= #hireDate#,
+					   SAL 			= #sal#,
+					   COMM 		= #comm#,
+					   DEPT_NO 		= #deptNo#
+				 where EMP_NO = #empNo#
+			]]>
+		</update>
+	
+		<delete id="deleteEmp" parameterClass="empVO">
+			<![CDATA[
+				delete from EMP
+				 where EMP_NO = #empNo#
+			]]>
+		</delete>
+		
+		<select id="selectEmp" parameterClass="empVO" resultMap="empResult">
+			<![CDATA[
+				select EMP_NO,
+					   EMP_NAME,
+					   JOB,
+					   MGR,
+					   HIRE_DATE,
+					   SAL,
+					   COMM,
+					   DEPT_NO
+				  from EMP
+				 where EMP_NO = #empNo#
+			]]>
+		</select>
+	
+		<select id="selectEmpList" parameterClass="empVO" resultMap="empResult">
+			<![CDATA[
+				select EMP_NO,
+					   EMP_NAME,
+					   JOB,
+					   MGR,
+					   HIRE_DATE,
+					   SAL,
+					   COMM,
+					   DEPT_NO
+				  from EMP
+				 where 1 = 1
+			]]>
+			<isNotNull prepend="and" property="empNo">
+				EMP_NO = #empNo#
+			</isNotNull>
+			<isNotNull prepend="and" property="empName">
+				EMP_NAME LIKE '%' || #empName# || '%'
+			</isNotNull>
+		</select>
+		
+	</sqlMap>
+	/**************************************************************************************/
+	
+	. /lab204-ibatis/src/test/resources/META-INF/sqlmap/mappings/lab-dummy.xml 를 확인한다.
+	
+	. /lab204-ibatis/src/test/resources/META-INF/sqlmap/mappings/lab-emp-cachemodel.xml 를 확인한다.
+
+====================================================
+*Step3. 테스트 실행
+	1) . /lab204-ibatis/src/test/java/egovframework/lab/dataaccess/service/EmpServiceTest.java 를 실행한다.
+	
+	2) iBatis 캐시 사용 테스트를 위해서 아래와 같이 EmpServiceImpl의 selectEmp() 메소드 내 주석을 변경하고, 
+	. /lab204-ibatis/src/test/java/egovframework/lab/dataaccess/service/CacheModelTest 를 실행한다.
+	/**************************************************************************************/
+	public EmpVO selectEmp(EmpVO vo) {
+		// return (EmpVO) selectByPk("selectEmp", vo);
+		return (EmpVO) selectByPk("selectEmpUsingCacheModelLRU", vo);
+	}
+	/**************************************************************************************/
+	
+	
+	
+(참고) Sql 로깅 설정
+	log4jdbc 를 이용하여 실행되는 SQL문을 로깅할 수 있다. 실행되는 SQL문 정보를 보려면 .properties 파일을 아래와 같이 변경한다.
+	
+ 1) /lab204-ibatis/src/test/resources/META-INF/spring/jdbc.properties 를 다음과 같이 변경한다.
+	/**************************************************************************************/
+	db.driver=net.sf.log4jdbc.DriverSpy
+	db.dburl=jdbc:log4jdbc:hsqldb:mem:testdb
+	#db.dburl=jdbc:log4jdbc:hsqldb:hsql://localhost/sampledb
+	db.username=sa
+	db.password=
+	/**************************************************************************************/
+
+ 2) /lab204-ibatis/src/test/resources/log4j.xml 에 다음 Logger 를 추가한다.
+	/**************************************************************************************/
+	<!-- log SQL with timing information, post execution -->
+	<Logger name="jdbc.sqltiming" level="INFO" additivity="false">
+			<AppenderRef ref="console" />
+	<Logger>
+	/**************************************************************************************/

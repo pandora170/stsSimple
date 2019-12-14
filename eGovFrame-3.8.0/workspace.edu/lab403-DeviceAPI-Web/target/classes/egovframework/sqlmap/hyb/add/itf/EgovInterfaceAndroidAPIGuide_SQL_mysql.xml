@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="InterfaceAndroidInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>	
+
+	<resultMap id="interfaceAndroidInfo" class="egovframework.hyb.add.itf.service.InterfaceAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="emails" column="EMAILS"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userPw" column="USER_PW"/>
+	</resultMap>
+	
+	<select id="interfaceAndroidAPIDAO.selectInterfaceInfoListCnt" resultClass="int">
+		<![CDATA[	
+	    	SELECT COUNT(*) cnt
+			FROM INTERFACE_EGOV
+			WHERE USER_ID = #userId#
+		]]>	
+	</select>
+	
+	<insert id="interfaceAndroidAPIDAO.insertInterfaceInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (IFNULL(MAX(SN), 0)+1) sn from INTERFACE_EGOV		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO INTERFACE_EGOV 
+				( SN
+				  , UUID
+				  , EMAILS
+				  , USER_ID 
+				  , USER_PW)
+			VALUES ( #sn#
+				  , #uuid#
+				  , #emails#
+				  , #userId#
+				  , #userPw#)
+		]]>
+	</insert>
+	
+	<delete id="interfaceAndroidAPIDAO.deleteInterfaceInfo">
+		<![CDATA[
+			DELETE FROM INTERFACE_EGOV
+			WHERE USER_ID = #userId#
+			AND USER_PW = #userPw#
+		]]>
+	</delete>
+	
+	<select id="interfaceAndroidAPIDAO.selectInterfaceInfo" resultMap="interfaceAndroidInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, EMAILS, 
+				USER_ID, USER_PW
+			FROM INTERFACE_EGOV 
+			WHERE USER_ID = #userId# 
+			AND USER_PW = #userPw#
+		]]>
+	</select>
+</sqlMap>

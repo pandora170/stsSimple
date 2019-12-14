@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ResourceUpdateHybridInfo">
+
+	<typeAlias  alias="resourceUpdateDevcieAPISearchVO" type="egovframework.hyb.mbl.upd.service.ResourceUpdateDeviceAPIDefaultVO"/>
+
+	<resultMap id="resourceUpdateInfo" class="egovframework.hyb.mbl.upd.service.ResourceUpdateDeviceAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="osType" column="OS_TYPE"/>
+		<result property="resVersion" column="RES_VERSION"/>
+		<result property="streFileNm" column="STRE_FILE_NM"/>
+		<result property="orignlFileNm" column="ORIGNL_FILE_NM"/>		
+		<result property="updDt" column="UPD_DT"/>
+		<result property="updateContent" column="UPDATE_CONTENT"/>		
+	</resultMap>
+	
+	<select id="resourceUpdateDeviceAPIDAO.selectResourceUpdateVersionInfo" parameterClass="resourceUpdateDevcieAPISearchVO" resultMap="resourceUpdateInfo">
+		SELECT
+			SN, 
+			APP_ID, 
+			OS_TYPE, 
+			RES_VERSION, 
+			UPDATE_CONTENT, 
+			UPD_DT,
+    		STRE_FILE_NM, 
+    		ORIGNL_FILE_NM
+		FROM RESOURCE_UPDATE a, FILE_DETAIL_INFO b
+		WHERE SN = (
+			SELECT max(SN)
+			FROM RESOURCE_UPDATE
+			WHERE APP_ID = #appId#
+				AND OS_TYPE = #osType#
+		) And a.FILE_SN = b.FILE_SN
+	</select>
+
+</sqlMap>

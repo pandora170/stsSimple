@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap ><parameterMap id="deptNo" class="java.lang.String"><parameter property="deptNo"/>
+</parameterMap>
+<resultMap id="resultMap" class="java.lang.String"><result property="deptName" column="DEPT_NAME"/>
+</resultMap>
+<select id="selectDept" parameterMap="deptNo" resultMap="resultMap">
+SELECT * 
+  FROM DEPT
+</select>
+
+
+</sqlMap>

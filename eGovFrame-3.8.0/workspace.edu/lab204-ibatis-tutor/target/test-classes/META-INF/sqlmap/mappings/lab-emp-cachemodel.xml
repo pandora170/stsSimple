@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<!-- [Step 2-5] lab-emp-cachemodel.xml mapping xml 작성 -->
+<sqlMap namespace="EmpCache">
+
+	<typeAlias alias="empVO" type="egovframework.lab.dataaccess.service.EmpVO" />
+
+	<!-- Spring 2.5.5 이상에서 mappingLocations 을 통해 sql mapping 파일 로딩하는 경우 CacheModel 
+		사용에 문제가 있는듯. 주의할것! -->
+	<cacheModel id="cacheEmpLRU" type="LRU" readOnly="true">
+		<flushInterval hours="24" />
+		<flushOnExecute statement="insertEmp" />
+		<flushOnExecute statement="updateEmp" />
+		<flushOnExecute statement="deleteEmp" />
+		<property name="cache-size" value="1000" />
+	</cacheModel>
+
+	<!-- sql reuse test -->
+	<sql id="selectEmpReuse">
+		<![CDATA[
+			select EMP_NO,
+				   EMP_NAME,
+				   JOB,
+				   MGR,
+				   HIRE_DATE,
+				   SAL,
+				   COMM,
+				   DEPT_NO
+			from EMP
+			where 1=1
+		]]>
+		<isNotNull prepend="and" property="empNo">
+			EMP_NO = #empNo#
+		</isNotNull>
+	</sql>
+
+	<!-- CacheModel test -->
+	<select id="selectEmpUsingCacheModelLRU" parameterClass="empVO" resultMap="Emp.empResult" cacheModel="cacheEmpLRU">
+		<include refid="selectEmpReuse" />
+	</select>
+
+</sqlMap>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generateCode SYSTEM "../ux_generate_spec.dtd">
+
+<generateCode>
+	<component id="progress">
+	    <scriptInfo>
+	        <baseHtmlTag>
+	            <![CDATA[               
+	                    $(document).bind("mobileinit", function(){
+	                        $.mobile.progressBar = true;
+	                    });
+	            ]]>        
+	        </baseHtmlTag>
+	    </scriptInfo>
+	    <attributeInfo>
+	        <baseHtmlTag>
+	            <![CDATA[
+	                <a href="javascript:$.mobile.showPageLoadingMsg('{etcTheme}');" data-role="button" data-inline="true">Loading</a>
+	                <a href="javascript:$.mobile.hidePageLoadingMsg();" data-role="button" data-inline="true">Stop</a>
+	            ]]>
+	        </baseHtmlTag>
+	    </attributeInfo>    	    
+	</component>
+</generateCode>

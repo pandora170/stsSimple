@@ -1,0 +1,884 @@
+﻿실습환경 구성
+ - lab201-ioc 프로젝트 import
+ - maven repository 설정 및 dependency library 맞춤
+
+Step 1. XML 설정 방식의 Spring Bean 서비스 작성
+
+ 1) Interface 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/EmpService.java 를 작성한다.
+	/**************************************************************************************/
+	public interface EmpService {
+
+		public void insertEmp(EmpVO empVO) throws Exception;
+
+		public void updateEmp(EmpVO empVO) throws Exception;
+
+		public void deleteEmp(EmpVO empVO) throws Exception;
+
+		public EmpVO selectEmp(EmpVO empVO) throws Exception;
+
+		public List<EmpVO> selectEmpList() throws Exception;
+
+	}
+	/**************************************************************************************/
+	Ctrl + Shift + O (source > Organize Imports) 를 수행하여 자동 import 를 수행한다. 
+        cf.) 아직 EmpVO 를 작성하지 않아 컴파일 에러 상태일 것이다.
+	
+ 2) VO 작성 - 현재 실습과정에서 사용하는 DAO 에서 DB 구현 없이 자바 class 영역에 데이터를 임시 관리할 때 데이터 비교를 위해 Comparable 구현 (Generic 스타일로)
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/EmpVO.java 를 작성한다.
+	/**************************************************************************************/
+	public class EmpVO implements Serializable {
+
+		private int empNo;
+
+		private String empName;
+
+		private String job;
+	}
+	/**************************************************************************************/
+	. 실제 이 실습 프로젝트에서 사용하는 EmpVO 의 속성은 위 3개 이다. 위와 같이 private 멤버 속성만 정의한 상태에서
+	마우스 우클릭 > Source > Generate Getters and Setters 를 실행하여 팝업된 윈도우에서 getter/setter 메서드를 생성할 대상 속성을 선택(Select All) 한 다음, OK 실행 --> 메서드 생성 확인
+	. 이하 Ctrl + Shift + O 자동 import 는 필요시 수시로 수행함!!
+	. EmpVO 의 마커바 상에서 quick fix 로 제공되는 기능 중 Add generated serial version ID 추가 하기를 권고함.
+	
+	. Comparable 를 implements 토록 추가 - 여기서는 generic 스타일로 Comparable<EmpVO> 로 한정
+	. compareTo 메서드 추가 - 여기서는 EmpVO 의 empNo 속성의 크기를 비교하여 판단토록 하였음.
+	/**************************************************************************************/
+	public class EmpVO implements Serializable, Comparable<EmpVO> {
+		...
+		public int compareTo(EmpVO o) {
+			if (empNo > o.getEmpNo()) {
+				return 1;
+			} else if (empNo < o.getEmpNo()) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	}
+	/**************************************************************************************/
+		
+	. 전체 EmpVO
+	/**************************************************************************************/
+	public class EmpVO implements Serializable, Comparable<EmpVO> {
+
+		private static final long serialVersionUID = -8049578957221741495L;
+
+		private int empNo;
+
+		private String empName;
+
+		private String job;
+
+		private BigDecimal mgr;
+
+		private Date hireDate;
+
+		private BigDecimal sal;
+
+		private BigDecimal comm;
+
+		private BigDecimal deptNo;
+
+		public int getEmpNo() {
+			return empNo;
+		}
+
+		public void setEmpNo(int empNo) {
+			this.empNo = empNo;
+		}
+
+		public String getEmpName() {
+			return empName;
+		}
+
+		public void setEmpName(String empName) {
+			this.empName = empName;
+		}
+
+		public String getJob() {
+			return job;
+		}
+
+		public void setJob(String job) {
+			this.job = job;
+		}
+
+		public BigDecimal getMgr() {
+			return mgr;
+		}
+
+		public void setMgr(BigDecimal mgr) {
+			this.mgr = mgr;
+		}
+
+		public Date getHireDate() {
+			return hireDate;
+		}
+
+		public void setHireDate(Date hireDate) {
+			this.hireDate = hireDate;
+		}
+
+		public BigDecimal getSal() {
+			return sal;
+		}
+
+		public void setSal(BigDecimal sal) {
+			this.sal = sal;
+		}
+
+		public BigDecimal getComm() {
+			return comm;
+		}
+
+		public void setComm(BigDecimal comm) {
+			this.comm = comm;
+		}
+
+		public BigDecimal getDeptNo() {
+			return deptNo;
+		}
+
+		public void setDeptNo(BigDecimal deptNo) {
+			this.deptNo = deptNo;
+		}
+
+		public int compareTo(EmpVO o) {
+			if (empNo > o.getEmpNo()) {
+				return 1;
+			} else if (empNo < o.getEmpNo()) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+
+	}
+	/**************************************************************************************/
+
+	. EmpService 소스에서 Ctrl+Shift+O 하여 EmpVO 자동 import
+
+ 3) Impl 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/impl/XmlEmpServiceImpl.java 를 작성한다.
+	/**************************************************************************************/
+	public class XmlEmpServiceImpl implements EmpService {
+
+		private XmlEmpDAO empDAO;
+
+		public void setEmpDAO(XmlEmpDAO empDAO) {
+			this.empDAO = empDAO;
+		}
+
+		public void insertEmp(EmpVO empVO) throws Exception {
+			empDAO.insertEmp(empVO);
+		}
+
+		public void updateEmp(EmpVO empVO) throws Exception {
+			empDAO.updateEmp(empVO);
+		}
+
+		public void deleteEmp(EmpVO empVO) throws Exception {
+			empDAO.deleteEmp(empVO);
+		}
+
+		public EmpVO selectEmp(EmpVO empVO) throws Exception {
+			return empDAO.selectEmp(empVO);
+		}
+
+		public List<EmpVO> selectEmpList() throws Exception {
+			return empDAO.selectEmpList();
+		}
+
+	}
+	/**************************************************************************************/
+	. 위에서 dependency 객체로 XmlEmpDAO 를 setEmpDAO 메서드를 통해 Container 로부터 주입받아 동작하게 되며 EmpService 자체에 복잡한 비지니스 로직이 필요치 않은 경우로 DAO 에 단순 CRUD 기능을 위임해 처리하고 있음을 확인할 수 있음. 목록조회 메서드에서 확인할 수 있듯이 JDK 1.5 이상의 Generic 스타일로 구현하는 것을 권고함
+
+ 4) DAO 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/impl/XmlEmpDAO.java 를 작성한다. 
+	/**************************************************************************************/
+	public class XmlEmpDAO {
+
+		static List<EmpVO> list;
+
+		static {
+			list = new ArrayList<EmpVO>();
+			EmpVO empVO;
+			for (int i = 1; i <= 100; i++) {
+				empVO = new EmpVO();
+				empVO.setEmpNo(i);
+				empVO.setEmpName("EmpName " + i);
+				empVO.setJob("SALESMAN");
+				list.add(empVO);
+			}
+		}
+
+		public void insertEmp(EmpVO empVO) throws Exception {
+			list.add(empVO);
+			Collections.sort(list);
+		}
+
+		public void updateEmp(EmpVO empVO) throws Exception {
+			int index = Collections.binarySearch(list, empVO);
+			// 해당 데이터가 없는 경우 여기서는 ArrayIndexOutOfBoundsException 발생할 것임
+			EmpVO orgEmpVO = list.get(index);
+
+			orgEmpVO.setEmpName(empVO.getEmpName());
+			orgEmpVO.setJob(empVO.getJob());
+		}
+
+		public void deleteEmp(EmpVO empVO) throws Exception {
+			list.remove(Collections.binarySearch(list, empVO));
+			Collections.sort(list);
+		}
+
+		public EmpVO selectEmp(EmpVO empVO) throws Exception {
+			int index = Collections.binarySearch(list, empVO);
+
+			// list search 결과 해당값을 찾을 수 없으면 음수값
+			// (-(insertion point) - 1) 이 되돌려짐
+			return index < 0 ? null : list.get(index);
+		}
+
+		public List<EmpVO> selectEmpList() throws Exception {
+			return list;
+		}
+
+	}
+	/**************************************************************************************/
+	. 현 실습과정의 위 DAO 에서는 DB 연동/구현 없이 static 영역에 100 개의 EmpVO 에 대한 리스트를 생성해 두고 insert/update/delete 시에 static 하게 관리하고 있는 데이터에 대해 추가/변경/삭제가 일어나도록 간략히 구현한 예임. DB 가 아니므로 duplcated key 체크 등 번잡한 기능은 고려치 않았고, 데이터의 변경시에는 항상 sorting 을 새로 하여 select 시 binarySearch 로 빨리 찾을 수 있도록 하였음(EmpVO 는 Comparable 을 구현하였음). 목록조회는 검색조건 없이 전체 데이터를 return 하는 것으로 작성하였음.
+
+ 5) xml 설정 파일 작성
+	. /lab201-ioc/src/test/resources/META-INF/spring/context-emp.xml 를 작성한다.
+	/**************************************************************************************/
+	<!-- xml 형식 bean 정의 -->
+	
+	<bean id="xmlEmpService" class="egovframework.lab.ioc.service.impl.XmlEmpServiceImpl">
+		<property name="empDAO" ref="xmlEmpDAO" />
+	</bean>
+
+	<bean id="xmlEmpDAO" class="egovframework.lab.ioc.service.impl.XmlEmpDAO" />
+	/**************************************************************************************/
+	. xmlEmpService 와 xmlEmpDAO 에 대한 bean 설정을 확인할 수 있으며 xmlEmpService 의 property 설정 요소(setter injection 방식) 로 xmlEmpDAO 를 연결하고 있음을 확인 가능.
+	. Spring IDE 기반의 bean 설정파일에 대한 다양한 code assist 가 지원되므로 대상 클래스에 Ctrl + 마우스 오버 --> 클릭시 대상 소스 열림 또는 class="" 속성, property name="" 속성 내에서 [일부typing] Ctrl + Space 등을 사용하여 자동 완성되는 코드를 사용하는 것이 오타 가능성을 줄일 수 있음.
+
+ 6) Testcase 작성
+	. /lab201-ioc/src/test/java/egovframework/lab/ioc/service/EmpServiceTest.java 를 작성한다.
+	/**************************************************************************************/
+	package egovframework.lab.ioc.service;
+
+	import static org.junit.Assert.assertEquals;
+	import static org.junit.Assert.assertNotNull;
+	import static org.junit.Assert.assertNull;
+	import static org.junit.Assert.assertTrue;
+
+	import java.util.List;
+
+	import javax.annotation.Resource;
+
+	import org.junit.Test;
+	import org.junit.runner.RunWith;
+	import org.springframework.test.context.ContextConfiguration;
+	import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration(locations = {
+		"classpath*:META-INF/spring/context-common.xml",
+		"classpath*:META-INF/spring/context-emp.xml"
+		//,"classpath*:META-INF/spring/context-postprocessor.xml"   // 이 주석을 풀고 테스트 시 annotationEmpService 에 대해서는 delete 메서드에 @Debug 를 설정하였으므로 trace 로그가 출력될 것임.
+		})
+	public class EmpServiceTest {
+
+		// xml 형식으로 bean 설정한 경우 - 주석을 변경해 가며 xml, annotation 에 대해 테스트 할것
+	    @Resource(name = "xmlEmpService")
+	    EmpService empService;
+
+		// annotation 형식으로 bean 설정한 경우
+	//	 @Resource(name = "annotationEmpService")
+	//	 EmpService empService;
+
+		public EmpVO makeVO() {
+			// DAO 확인 - static 하게 관리하는 100 개 기본 데이터 있음
+			return makeVO(101);
+		}
+
+		public EmpVO makeVO(int empNo) {
+			EmpVO vo = new EmpVO();
+			vo.setEmpNo(empNo);
+			vo.setEmpName("홍길동" + empNo);
+			vo.setJob("개발자");
+			return vo;
+		}
+
+		public void checkResult(EmpVO vo, EmpVO resultVO) {
+			assertNotNull(resultVO);
+			assertEquals(vo.getEmpNo(), resultVO.getEmpNo());
+			assertEquals(vo.getEmpName(), resultVO.getEmpName());
+			assertEquals(vo.getJob(), resultVO.getJob());
+		}
+
+		@Test
+		public void testInsertEmp() throws Exception {
+			EmpVO vo = makeVO();
+
+			// insert
+			empService.insertEmp(vo);
+
+			// select
+			EmpVO resultVO = empService.selectEmp(vo);
+
+			// check
+			checkResult(vo, resultVO);
+		}
+
+		@Test
+		public void testUpdateEmp() throws Exception {
+			EmpVO vo = makeVO(102);
+
+			// insert
+			empService.insertEmp(vo);
+
+			// data change
+			vo.setEmpName("홍길순");
+			vo.setJob("설계자");
+
+			// update
+			empService.updateEmp(vo);
+
+			// select
+			EmpVO resultVO = empService.selectEmp(vo);
+
+			// check
+			checkResult(vo, resultVO);
+		}
+
+		@Test
+		public void testDeleteEmp() throws Exception {
+			EmpVO vo = makeVO(103);
+
+			// insert
+			empService.insertEmp(vo);
+
+			// delete
+			empService.deleteEmp(vo);
+
+			// select
+			EmpVO resultVO = empService.selectEmp(vo);
+
+			// null 이어야 함
+			assertNull(resultVO);
+		}
+
+		@Test
+		public void testSelectEmpList() throws Exception {
+
+			// select list
+			List<EmpVO> resultList = empService.selectEmpList();
+
+			// check
+			int firstListSize = resultList.size();
+			assertTrue(firstListSize > 100);
+			// DAO 에서 Emp 데이터를 관리할 때 항상 sorted 된 상태임
+			assertEquals(1, resultList.get(0).getEmpNo());
+
+			// delete first data
+			EmpVO empVO = new EmpVO();
+			empVO.setEmpNo(1);
+
+			empService.deleteEmp(empVO);
+
+			// select List again
+			resultList = empService.selectEmpList();
+
+			assertEquals(firstListSize - 1, resultList.size());
+			// DAO 에서 Emp 데이터를 관리할 때 항상 sorted 된 상태임
+			assertEquals(2, resultList.get(0).getEmpNo());
+			assertEquals("EmpName 2", resultList.get(0).getEmpName());
+			assertEquals("SALESMAN", resultList.get(0).getJob());
+
+		}
+
+	}
+	/**************************************************************************************/
+	. Spring 연동을 위해 제공하는 @RunWith(SpringJUnit4ClassRunner.class), @ContextConfiguration (...) 설정에 유의한다. 테스트에 필요한 Spring Bean 설정 파일만으로 제한하는 것이 바람직함.
+	. 테스트에 필요한 Spring Bean 들은 annotation 형태(여기서는 @Resource)로 injection 하여 사용한다.
+	. JUnit 4.4 의 Assert 관련 기능은 Ctrl+Shift+O 로 자동 import 되지 않음. static import 사용해야 함. --> 에러로 표시되는 asssertXX 사용 위치에 마우스 오버 하면 Add static imports ... 와 같은 quick fix 가 나타나 활용 가능함.
+
+
+2. Annotation 설정 방식의 Spring Bean 서비스 작성
+
+ 1) 동일한 Interface
+
+ 2) 동일한 VO
+
+ 3) Annotation 을 적용한 Impl
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/impl/AnnotationEmpServiceImpl.java 를 작성한다.
+	/**************************************************************************************/
+	@Service("annotationEmpService")
+	public class AnnotationEmpServiceImpl implements EmpService {
+
+		@Resource(name = "annotationEmpDAO")
+		private AnnotationEmpDAO empDAO;
+
+		public void insertEmp(EmpVO empVO) throws Exception {
+			empDAO.insertEmp(empVO);
+		}
+
+		public void updateEmp(EmpVO empVO) throws Exception {
+			empDAO.updateEmp(empVO);
+		}
+
+		public void deleteEmp(EmpVO empVO) throws Exception {
+			empDAO.deleteEmp(empVO);
+		}
+
+		public EmpVO selectEmp(EmpVO empVO) throws Exception {
+			return empDAO.selectEmp(empVO);
+		}
+
+		public List<EmpVO> selectEmpList() throws Exception {
+			return empDAO.selectEmpList();
+		}
+
+	}
+	/**************************************************************************************/
+	. @Service 스테레오 타입 Annotation 을 사용하여 bean 설정하였음.
+	. @Resource (JSR250 표준) Annotation 을 사용하여 Dependency Bean(여기서는 AnnotationEmpDAO) 를 injection 하였음.
+	. 기타 CRUD 관련 비지니스 메서드는 동일함.
+
+ 4) Annotation 을 적용한 DAO
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/impl/AnnotationEmpDAO.java 를 작성한다.
+	/**************************************************************************************/
+	@Repository("annotationEmpDAO")
+	public class AnnotationEmpDAO {
+
+		static List<EmpVO> list;
+
+		static {
+			list = new ArrayList<EmpVO>();
+			EmpVO empVO;
+			for (int i = 1; i <= 100; i++) {
+				empVO = new EmpVO();
+				empVO.setEmpNo(i);
+				empVO.setEmpName("EmpName " + i);
+				empVO.setJob("SALESMAN");
+				list.add(empVO);
+			}
+		}
+
+		public void insertEmp(EmpVO empVO) throws Exception {
+			list.add(empVO);
+			Collections.sort(list);
+		}
+
+		public void updateEmp(EmpVO empVO) throws Exception {
+			int index = Collections.binarySearch(list, empVO);
+			// 해당 데이터가 없는 경우 여기서는 ArrayIndexOutOfBoundsException 발생할 것임
+			EmpVO orgEmpVO = list.get(index);
+
+			orgEmpVO.setEmpName(empVO.getEmpName());
+			orgEmpVO.setJob(empVO.getJob());
+		}
+
+		public void deleteEmp(EmpVO empVO) throws Exception {
+			list.remove(Collections.binarySearch(list, empVO));
+			Collections.sort(list);
+		}
+
+		public EmpVO selectEmp(EmpVO empVO) throws Exception {
+			int index = Collections.binarySearch(list, empVO);
+
+			// list search 결과 해당값을 찾을 수 없으면 음수값
+			// (-(insertion point) - 1) 이 되돌려짐
+			return index < 0 ? null : list.get(index);
+		}
+
+		public List<EmpVO> selectEmpList() throws Exception {
+			return list;
+		}
+
+	}
+	/**************************************************************************************/
+	. xml 설정 방식의 예와 마찬가지로 DB 연동 없이 테스트를 위한 static 한 내부 데이터를 관리하며 CRUD 하는 예임.
+	. @Repository 스테레오 타입 Annotation 을 사용하여 bean 설정 하였음. (DAO 인 경우)
+
+ 5) common 설정 파일 - component scan
+	. /lab201-ioc/src/test/resources/META-INF/spring/context-common.xml 를 작성한다.
+	/**************************************************************************************/
+		<context:component-scan base-package="egovframework" />
+	/**************************************************************************************/
+
+ 6) Testcase 작성 (기존 Testcase 에서 DI 하는 서비스만 변경)
+	. /lab201-ioc/src/test/java/egovframework/lab/ioc/service/EmpServiceTest.java 를 작성한다. (이미 작성하였음.)
+	/**************************************************************************************/
+    // xml 형식으로 bean 설정한 경우 - 주석을 변경해 가며 xml, annotation 에 대해 테스트 할것
+	// @Resource(name = "xmlEmpService")
+	// EmpService empService;
+
+    // annotation 형식으로 bean 설정한 경우
+     @Resource(name = "annotationEmpService")
+     EmpService empService;
+	/**************************************************************************************/
+	. annotation 형식으로 설정한 annotationEmpService 를 테스트 대상 서비스로 사용토록 주석 변경하였음.
+
+
+3. XML 설정 방식의 Life Cycle Callback 기능 테스트 서비스 작성
+ 1) xml 설정 방식의 Life Cycle 테스트 서비스 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/lifecycle/XmlBeanLifeCycleSample.java 를 작성한다.
+	/**************************************************************************************/
+	public class XmlBeanLifeCycleSample implements InitializingBean, DisposableBean {
+
+		private static final Logger LOGGER = LoggerFactory.getLogger(XmlBeanLifeCycleSample.class);
+
+		public String sampleMethod() {
+			return "Hi~ xml sample";
+		}
+
+		public void afterPropertiesSet() throws Exception {
+			LOGGER.debug("InitializingBean 을 구현한 경우 Bean 초기화(Initialization) 시 afterPropertiesSet 메서드가 수행됨.");
+		}
+
+		public void directedInit() throws Exception {
+			LOGGER.debug("Bean 설정에 init-method 를 기술한 경우 해당 초기화 메서드가 수행됨.");
+		}
+
+		public void destroy() throws Exception {
+			LOGGER.debug("DisposableBean 을 구현한 경우 Bean 종료(Destruction) 시 destroy 메서드가 수행됨.");
+		}
+
+		public void directedDestroy() throws Exception {
+			LOGGER.debug("Bean 설정에 destroy-method 를 기술한 경우 해당 종료 메서드가 수행됨.");
+		}
+
+	}
+	/**************************************************************************************/
+
+ 2) xml 설정 파일 - init-method, destroy-method 설정
+	. /lab201-ioc/src/test/resources/META-INF/spring/context-lifecycle.xml 를 작성한다.
+	/**************************************************************************************/
+		<bean id="xmlBeanLifeCycleSample" class="egovframework.lab.ioc.lifecycle.XmlBeanLifeCycleSample"
+			init-method="directedInit" destroy-method="directedDestroy" />
+	/**************************************************************************************/
+
+ 참고.) InitializingBean - afterPropertiesSet
+        xml 설정 파일 내에 init-method 지정 - directedInit (메서드명은 자유)
+        대상 서비스 activation (비즈니스 메서드 수행)
+        DisposableBean - destroy
+        xml 설정 파일 내에 destroy-method 지정 - directedDestroy (메서드명은 자유)
+
+ 3) Testcase 를 통해 실행 - 여기서는 assertXX 로 하지 않고 단순 콘솔로깅 확인
+	. /lab201-ioc/src/test/java/egovframework/lab/ioc/lifecycle/BeanLifeCycleTest.java 를 작성한다.
+	/**************************************************************************************/
+	package egovframework.lab.ioc.lifecycle;
+
+	import javax.annotation.Resource;
+
+	import org.slf4j.Logger;
+	import org.slf4j.LoggerFactory;
+	import org.junit.Test;
+	import org.junit.runner.RunWith;
+	import org.springframework.context.ApplicationContext;
+	import org.springframework.test.context.ContextConfiguration;
+	import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	//@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-*.xml" })
+	//@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-common.xml" })
+	@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-lifecycle.xml" })
+	public class BeanLifeCycleTest {
+	
+		private static final Logger LOGGER = LoggerFactory.getLogger(BeanLifeCycleTest.class);
+
+		@Resource(name = "xmlBeanLifeCycleSample")
+		XmlBeanLifeCycleSample beanLifeCycleSample;
+		//@Resource(name = "annotationBeanLifeCycleSample")
+		//AnnotationBeanLifeCycleSample beanLifeCycleSample;
+
+		@Resource
+		ApplicationContext context;
+
+		@Test
+		public void testBeanLifeCycleCallbackMethod() throws Exception {
+
+			LOGGER.debug(beanLifeCycleSample.sampleMethod());
+
+			// Bean LifeCycle callback 메서드로 지정된 각 메서드의 실행
+			// 순서를 console 에서 확인
+
+		}
+	}
+	/**************************************************************************************/
+
+
+4. Annotation 설정 방식의 Life Cycle Callback 기능 테스트 서비스 작성
+ 1) annotation 설정 방식의 Life Cycle 테스트 서비스 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/lifecycle/AnnotationBeanLifeCycleSample.java 를 작성한다.
+	/**************************************************************************************/
+	@Component("annotationBeanLifeCycleSample")
+	public class AnnotationBeanLifeCycleSample {
+
+		private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationBeanLifeCycleSample.class);
+
+		@Debug
+		public String sampleMethod() {
+			return "Hi~ annotation sample";
+		}
+
+		public void afterPropertiesSet() throws Exception {
+			LOGGER.debug("InitializingBean 을 구현한 경우 Bean 초기화(Initialization) 시 afterPropertiesSet 메서드가 수행됨.");
+		}
+
+		@PostConstruct
+		public void directedInit() throws Exception {
+			LOGGER.debug("@PostConstruct 를 기술한 메서드의 경우  초기화 메서드로 수행됨.");
+		}
+
+		public void destroy() throws Exception {
+			LOGGER.debug("DisposableBean 을 구현한 경우 Bean 종료(Destruction) 시 destroy 메서드가 수행됨.");
+		}
+
+		@PreDestroy
+		public void directedDestroy() throws Exception {
+			LOGGER.debug("@PreDestroy 를 기술한 메서드의 경우 종료 메서드로 수행됨.");
+		}
+
+	}
+	/**************************************************************************************/
+	. @Component 스테레오 타입 Annotation 을 사용하여 서비스 정의 하였음.
+
+ 2) common 설정 파일 - component scan - 이미 위에서 작성하였음.
+	. /lab201-ioc/src/test/resources/META-INF/spring/context-common.xml 를 작성한다.
+	/**************************************************************************************/
+		<context:component-scan base-package="egovframework" />
+	/**************************************************************************************/
+
+ 참고.) @PostConstruct annotation 설정 - directedInit (메서드명은 자유)
+        대상 서비스 activation (비즈니스 메서드 수행)
+        @PreDestroy annotation 설정 - directedDestroy (메서드명은 자유)
+        Testcase 를 통해 실행 (기존 Testcase 에서 DI 하는 서비스만 변경)
+
+ 3) Testcase 를 통해 실행 - 여기서는 assertXX 로 하지 않고 단순 콘솔로깅 확인
+	. /lab201-ioc/src/test/java/egovframework/lab/ioc/lifecycle/BeanLifeCycleTest.java 를 작성한다. - 위에서 작성한 테스트케이스에서 annotation 테스트 서비스로 injection 및 설정 파일 로딩 설정만 변경함.
+	/**************************************************************************************/
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	//@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-*.xml" })
+	@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-common.xml" })
+	//@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-lifecycle.xml" })
+	public class BeanLifeCycleTest {
+	
+		private static final Logger LOGGER = LoggerFactory.getLogger(BeanLifeCycleTest.class);
+
+		//@Resource(name = "xmlBeanLifeCycleSample")
+		//XmlBeanLifeCycleSample beanLifeCycleSample;
+		@Resource(name = "annotationBeanLifeCycleSample")
+		AnnotationBeanLifeCycleSample beanLifeCycleSample;
+
+		@Resource
+		ApplicationContext context;
+
+		@Test
+		public void testBeanLifeCycleCallbackMethod() throws Exception {
+
+			LOGGER.debug(beanLifeCycleSample.sampleMethod());
+
+			// Bean LifeCycle callback 메서드로 지정된 각 메서드의 실행
+			// 순서를 console 에서 확인
+
+		}
+	}
+	/**************************************************************************************/
+
+
+5. BeanFactoryPostProcessor 테스트 서비스 작성
+
+ 1) BeanFactoryPostProcessor 테스트 서비스 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/postprocess/SampleBeanFactoryPostProcessor.java 를 작성한다.
+	/**************************************************************************************/
+	public class SampleBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+
+		private static final Logger LOGGER = LoggerFactory.getLogger(SampleBeanFactoryPostProcessor.class);
+
+		public void postProcessBeanFactory(
+				ConfigurableListableBeanFactory beanFactory) throws BeansException {
+			LOGGER.debug("SampleBeanFactoryPostProcessor executed.");
+
+			// 전체 bean 이름 출력
+			for (String beanDefinitionName : beanFactory.getBeanDefinitionNames()) {
+				LOGGER.debug(beanDefinitionName);
+			}
+		}
+
+	}
+	/**************************************************************************************/
+	. postProcessBeanFactory 메서드 작성 - 전체 등록된 bean 의 이름 출력
+
+ 2) xml 설정
+	. /lab201-ioc/src/test/resources/META-INF/spring/context-postprocessor.xml 를 작성한다.
+	/**************************************************************************************/
+		<!-- BeanFactory 후처리기 테스트 - SampleBeanFactoryPostProcessor - 전체 bean 이름 출력 -->
+		<bean class="egovframework.lab.ioc.postprocess.SampleBeanFactoryPostProcessor" />
+	/**************************************************************************************/
+
+
+6. BeanPostProcessor 테스트 서비스 작성
+
+ 1) @Debug 를 대상 메서드에 설정
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/service/impl/AnnotationEmpServiceImpl.java 의 deleteEmp 메서드 위에 설정
+	/**************************************************************************************/
+		@Debug
+		public void deleteEmp(EmpVO empVO) throws Exception {
+			empDAO.deleteEmp(empVO);
+		}
+	/**************************************************************************************/
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/lifecycle/AnnotationBeanLifeCycleSample.java 의 sampleMethod 메서드 위에 설정
+	/**************************************************************************************/
+		@Debug
+		public String sampleMethod() {
+			return "Hi~ annotation sample";
+		}
+	/**************************************************************************************/
+
+ 2) BeanPostProcessor 테스트 서비스 작성
+	. /lab201-ioc/src/main/java/egovframework/lab/ioc/postprocess/SampleBeanPostProcessor.java 를 작성한다.
+	/**************************************************************************************/
+	public class SampleBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+
+		private static final Logger LOGGER = LoggerFactory.getLogger(SampleBeanPostProcessor.class);
+
+		private ApplicationContext context;
+
+		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+			LOGGER.debug("postProcessAfterInitialization with : {}", beanName);
+			return bean;
+		}
+
+		public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
+
+			// 현재 생성처리할 bean 이름 출력
+			LOGGER.debug("postProcessBeforeInitialization with : {}", beanName);
+
+			Class<? extends Object> clazz = bean.getClass();
+
+			// Debug Annotation 체크를 위한 MethodMatcher
+			AnnotationMethodMatcher annotationMethodMatcher = new AnnotationMethodMatcher(Debug.class);
+
+			// advice(설정파일을 보면 customizableTraceInterceptor 임) + Pointcut 으로 구성된
+			// Advisor
+			DefaultPointcutAdvisor advisor = (DefaultPointcutAdvisor) context.getBean("debugAdvisor");
+
+			// 현재 bean Class 에 존재하는 모든 메서드를 검색하며 Debug Annotation 이 달려 있는 경우를 체크함
+			for (Method method : clazz.getDeclaredMethods()) {
+				// Debug Annotation 이 달려 있는 경우
+				if (annotationMethodMatcher.matches(method, clazz)) {
+					// maching method 로그 출력
+					LOGGER.debug("maching method : {}.{}", clazz.getSimpleName(), method.getName());
+
+					// debugAdvisor 조작 전 기본 Pointcut 인 경우 - 현재 찾아진 Debug Annotation
+					// 이 달려있는 Bean 에 대한 Pointcut 으로 대체
+					// cf.)(현재까지 생성된 Bean - SampleBeanPostProcessor 로 일반 bean 보다 먼저
+					// 생성됨)은
+					// 최초 등록시 Pointcut.TRUE 이기 때문에 customizableTraceInterceptor 가
+					// 구동되었을 것임
+					if (advisor.getPointcut() == Pointcut.TRUE) {
+						advisor.setPointcut(new ComposablePointcut(new RootClassFilter(clazz), annotationMethodMatcher));
+						// 한번 대체된 Pointcut 에 대해서는 다음에 찾아진 Debug Annotation 이 달려있는
+						// Bean 에 대한 Pointcut 을 union 시켜 나감.
+					} else {
+						ComposablePointcut pointcut = (ComposablePointcut) advisor.getPointcut();
+						pointcut.union(new ComposablePointcut(new RootClassFilter(clazz), annotationMethodMatcher));
+						advisor.setPointcut(pointcut);
+					}
+				}
+			}
+
+			return bean;
+		}
+
+		public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+			this.context = applicationContext;
+		}
+
+	}
+
+	/**************************************************************************************/
+	. postProcessAfterInitialization 메서드 작성 - bean 별 단순 로그
+	. ApplicationContextAware 를 implements 하고 setApplicationContext 메서드를 작성하여 현재 구동중인 Container(ApplicationContext) 를 얻음. --> 위에서는 context.getBean 으로 debugAdvisor 를 Dependency Lookup 방식으로 찾는 예로 사용됨
+ 	. postProcessBeforeInitialization 메서드 작성 - @Debug 가 달려있는 대상 비지니스 메서드에 대해 debugAdvisor 의 Pointcut 으로 추가 --> 대상 메서드 실행 시 customizableTraceInterceptor 가 수행되어 메서드 실행 상세사항 로깅됨
+
+ 3) xml 설정 파일에 작성한 대상 BeanFactoryPostProcessor / BeanPostProcessor 에 대해 configuration bean 설정 추가 및 메서드 실행 상세내역 로깅을 위한 AOP 적용 관련 설정들 추가
+	. /lab201-ioc/src/test/resources/META-INF/spring/context-postprocessor.xml 에 관련 설정 추가
+	/**************************************************************************************/
+			
+		<!-- CGLib 을 사용한 proxy 자동 생성을 위한 설정 
+			ex.) AnnotationBeanLifeCycleSample 은 Interface 없는 POJO 클래스인데 이에 대해 DebugAdvisor 를 달아주려면 CGLib 으로 Proxy 처리 되어야 함. -->
+		<aop:config proxy-target-class="true"/>
+
+		<!-- debugAdvisor 에 제공될 advice 로 Spring 에서 기본 제공하는 CustomizableTraceInterceptor 설정 
+			대상 메서드 진입, 종료 또는 exception 발생 시 관련 상세 내역을 로깅함. - 아래의 placeholder 들을 확인할 것.
+		-->
+		<bean id="customizableTraceInterceptor"
+			class="org.springframework.aop.interceptor.CustomizableTraceInterceptor">
+			<property name="enterMessage" value="★ Entering - $[targetClassShortName].$[methodName] ( arguments type : $[argumentTypes] , value : $[arguments] )"/>
+			<property name="exceptionMessage" value="★ Exception - $[targetClassShortName].$[methodName]  ( exception : $[exception] )"/>
+			<property name="exitMessage" value="★ Exiting - $[targetClassShortName].$[methodName] ( returns : $[returnValue] ) , Time($[invocationTime])"/>
+		</bean>
+
+		<!-- Advice 와 Pointcut 을 함께 가지는 Advisor 중 기본이 되는 DefaultPointcutAdvisor 설정 -->
+		<bean id="debugAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+			<property name="advice" ref="customizableTraceInterceptor" />
+			<!-- 여기서 Pointcut 을 설정하지 않으므로 기본으로 Pointcut.TRUE 에 의해 TruePointCut (모든 class 에 매칭됨) 이 설정됨 -->
+		</bean>
+
+		<!-- Bean 후처리기 테스트 - @Debug 가 달려있는 메서드를 가지는 bean 의 해당 클래스/메서드 에 대해 debugAdvisor 의 Pointcut 으로 추가함 -->
+		<bean class="egovframework.lab.ioc.postprocess.SampleBeanPostProcessor" />
+	/**************************************************************************************/
+
+ 4) 위 5,6 에 대해 Testcase 를 통해 실행
+	. /lab201-ioc/src/test/java/egovframework/lab/ioc/postprocess/PostProcessorTest.java 를 작성한다.
+	/**************************************************************************************/
+	package egovframework.lab.ioc.postprocess;
+
+	import static org.junit.Assert.assertEquals;
+
+	import javax.annotation.Resource;
+
+	import org.slf4j.Logger;
+	import org.slf4j.LoggerFactory;
+	import org.junit.Test;
+	import org.junit.runner.RunWith;
+	import org.springframework.aop.interceptor.CustomizableTraceInterceptor;
+	import org.springframework.test.context.ContextConfiguration;
+	import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+	import egovframework.lab.ioc.lifecycle.AnnotationBeanLifeCycleSample;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration(locations = {"classpath*:META-INF/spring/context-common.xml", "classpath*:META-INF/spring/context-postprocessor.xml" })
+	public class PostProcessorTest {
+
+		@Resource(name = "annotationBeanLifeCycleSample")
+		AnnotationBeanLifeCycleSample beanLifeCycleSample;
+
+		@Test
+		public void testBeanPostProcessor() throws Exception {
+
+			// log4j.xml 에 아래의 customizableTraceInterceptor
+			// 에 대한 default logger 설정을 하였음.
+			final Logger LOGGER = LoggerFactory.getLogger(CustomizableTraceInterceptor.class);
+
+			// TRACE 레벨인 경우에만 로그 출력됨
+			assertEquals(true, LOGGER.isTraceEnabled());
+
+			// @Debug 가 달려 있으므로 콘솔에서 아래와 같은 로그가 출력됨을 확인할 수 있음. 
+			// 2009-07-09 16:48:12,468 TRACE [org.springframework.aop.interceptor.CustomizableTraceInterceptor] ★ Entering - AnnotationBeanLifeCycleSample.sampleMethod ( arguments type :  , value :  )
+			// 2009-07-09 16:48:12,468 TRACE [org.springframework.aop.interceptor.CustomizableTraceInterceptor] ★ Exiting - AnnotationBeanLifeCycleSample.sampleMethod ( returns : Hi~ annotation sample ) , Time(0)
+			beanLifeCycleSample.sampleMethod();
+
+		}
+	}
+	/**************************************************************************************/
+
+
+ * 메서드 실행 상세내역을 로깅하고자 하는 경우 사용자 정의 Annotation @Debug 를 정의하여 대상 비지니스 메서드에 간단히 설정하여 적용할 수 있도록 만들어본 샘플임. Spring 에서 제공하는 CustomizableTraceInterceptor(Advice)를 통하여 추가적인 메서드 실행정보를 로깅할 수 있으며, DefaultPointcutAdvisor(Advisor = Pointcut + Advice) 를 사용하여 AOP 로 대상을 지정하고 있음. 단 여기서는 초기에 Pointcut 을 지정하는것이 아니라 BeanPostProcessor 를 통해서 @Debug 가 붙어있는 메서드가 인지되는 경우 동적으로 Advisor 의 Pointcut을 조작하여 처리토록 하는 샘플임. (Pointcut 의 구현체로 ComposablePointcut 를 사용하였으며, Pointcut 에서 사용하는 ClassFilter (구현체 RootClassFilter)) 도 사용하고 있음)
+

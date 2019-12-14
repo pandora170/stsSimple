@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CompassAndroidInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="compassAndroidSearchVO" type="egovframework.hyb.add.cps.service.CompassAndroidAPIDefaultVO"/>
+	<typeAlias  alias="compassAndroidAPIVO" type="egovframework.hyb.add.cps.service.CompassAndroidAPIVO"/>
+
+	<resultMap id="compassAndroidInfo" class="egovframework.hyb.add.cps.service.CompassAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="drc" column="DRC"/>
+		<result property="accrcy" column="ACCRCY"/>
+		<result property="timestamp" column="TIMESTAMP"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="compassAndroidAPIDAO.insertCompassInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from COMPASS
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO COMPASS 
+				( SN
+				  , UUID
+				  , DRC
+				  , ACCRCY
+				  , "TIMESTAMP"
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #drc#
+				  , #accrcy#
+				  , #timestamp#
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<update id="compassAndroidAPIDAO.updateCompassInfo">
+		<![CDATA[
+			UPDATE COMPASS 
+			SET SN=#sn#
+				, UUID=#uuid#
+				, DRC=#drc#
+				, ACCRCY=#accrcy#
+				, "TIMESTAMP"=#timestamp#
+				, USEYN=#useYn#
+			WHERE SN=#sn#
+		]]>
+	</update>
+	
+	<delete id="compassAndroidAPIDAO.deleteCompassInfo">
+		<![CDATA[
+			UPDATE COMPASS 
+			SET USEYN='N'
+		]]>
+	</delete>
+	
+	<select id="compassAndroidAPIDAO.selectCompassInfo" resultMap="compassAndroidInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, DRC, ACCRCY, "TIMESTAMP", USEYN
+			FROM COMPASS 
+			WHERE SN=#sn#
+		]]>
+	</select>
+	
+	<select id="compassAndroidAPIDAO.selectCompassInfoList" parameterClass="compassAndroidSearchVO" resultClass="compassAndroidAPIVO">
+
+			SELECT
+				SN, UUID, DRC, ACCRCY, "TIMESTAMP", USEYN
+			FROM COMPASS WHERE USEYN='Y'
+				
+	</select>
+	
+	<select id="compassAndroidAPIDAO.selectCompassInfoListTotCnt" parameterClass="compassAndroidSearchVO" resultClass="int">
+
+			SELECT COUNT(*) totcnt
+			FROM COMPASS
+			WHERE 1=1
+			<isEqual prepend="AND" property="searchCondition" compareValue="0">
+				UUID = #searchKeyword#
+			</isEqual>
+			<isEqual prepend="AND" property="searchCondition" compareValue="1">
+				NTWRK_TYPE LIKE CONCAT('%',#searchKeyword#,'%')
+			</isEqual>
+	</select>
+
+</sqlMap>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="DeviceAndroidInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="deviceAndroidSearchVO" type="egovframework.hyb.add.dvc.service.DeviceAndroidAPIVO"/>
+	<typeAlias  alias="deviceAndroidAPIVO" type="egovframework.hyb.add.dvc.service.DeviceAndroidAPIVO"/>
+
+	<resultMap id="deviceAndroidInfo" class="egovframework.hyb.add.dvc.service.DeviceAndroidAPIVO">
+		<result property="sn" column="SN"/>
+		<result property="uuid" column="UUID"/>
+		<result property="os" column="OS"/>
+		<result property="telno" column="TELNO"/>
+		<result property="strgeInfo" column="STRGE_INFO"/>
+		<result property="ntwrkDeviceInfo" column="NTWRK_DEVICE_INFO"/>
+		<result property="pgVer" column="PG_VER"/>
+		<result property="deviceNm" column="DEVICE_NM"/>
+		<result property="useYn" column="USEYN"/>
+	</resultMap>
+
+	<insert id="deviceAndroidAPIDAO.insertDeviceInfo">
+		<selectKey keyProperty="sn" resultClass="int">
+		   SELECT (NVL(MAX(SN), 0)+1) sn from DEVICE
+		   
+		</selectKey>
+		<![CDATA[
+			INSERT INTO DEVICE 
+				( SN
+				  , UUID
+				  , OS
+				  , TELNO
+				  , STRGE_INFO
+				  , NTWRK_DEVICE_INFO
+				  , PG_VER
+				  , DEVICE_NM
+				  , USEYN )
+			VALUES ( #sn#
+				  , #uuid#
+				  , #os#
+				  , #telno#
+				  , #strgeInfo#
+				  , #ntwrkDeviceInfo#
+				  , #pgVer#
+				  , #deviceNm#
+				  , 'Y')
+		]]>
+	</insert>
+	
+	<update id="deviceAndroidAPIDAO.updateDeviceInfo">
+		<![CDATA[
+			UPDATE DEVICE 
+			SET SN=#sn#
+				, UUID=#uuid#
+				, OS=#os#
+				, TELNO=#telno#
+				, STRGE_INFO=#strgeInfo#
+				, NTWRK_DEVICE_INFO=#ntwrkDeviceInfo#
+				, PG_VER=#pgVer#
+				, DEVICE_NM=#deviceNm#
+				, USEYN=#useYn#
+			WHERE SN=#sn#
+		]]>
+	</update>
+	
+	<delete id="deviceAndroidAPIDAO.deleteDeviceInfo">
+		<![CDATA[
+			UPDATE DEVICE 
+			SET USEYN='N'
+			WHERE SN=#sn#
+		]]>
+	</delete>
+	
+	<select id="deviceAndroidAPIDAO.selectDeviceInfo" resultMap="deviceAndroidInfo">
+		<![CDATA[
+			SELECT
+				SN, UUID, OS, TELNO, STRGE_INFO, NTWRK_DEVICE_INFO, PG_VER, DEVICE_NM , USEYN 
+			FROM DEVICE 
+			WHERE SN=#sn#
+		]]>
+	</select>
+	
+	<select id="deviceAndroidAPIDAO.selectDeviceInfoList" parameterClass="deviceAndroidSearchVO" resultClass="deviceAndroidAPIVO">
+		<![CDATA[
+			SELECT
+				SN, UUID, OS, TELNO, STRGE_INFO, NTWRK_DEVICE_INFO, PG_VER, DEVICE_NM , USEYN
+			FROM DEVICE
+			WHERE USEYN='Y' AND UUID=#uuid#
+			ORDER BY SN DESC
+		]]>						
+	</select>
+	
+	<select id="deviceAndroidAPIDAO.selectDeviceInfoListTotCnt" parameterClass="deviceAndroidSearchVO" resultClass="int">
+		<![CDATA[
+			SELECT COUNT(*) totcnt
+			FROM DEVICE
+			WHERE USEYN='Y' AND UUID=#uuid#
+		]]>			
+	</select>
+
+</sqlMap>

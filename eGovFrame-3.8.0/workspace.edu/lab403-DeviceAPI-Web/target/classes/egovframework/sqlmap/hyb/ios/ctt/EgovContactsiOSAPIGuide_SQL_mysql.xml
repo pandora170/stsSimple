@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ContactsiOSInfo">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="contactsiOSVO" type="egovframework.hyb.ios.ctt.service.ContactsiOSAPIVO"/>
+
+	<insert id="contactsiOSAPIDAO.insertContactInfo">		
+		<![CDATA[
+			INSERT INTO CONTACT_INFO
+				( UUID
+				  , ID 
+				  , NAME
+				  , TELNO
+				  , EMAILS				  
+				  , USEYN )
+			VALUES ( #uuid#
+				  , #contactId#
+				  , #name#
+				  , #telNo#
+				  , #emails#				  
+				  , #useYn#)
+		]]>
+	</insert>
+	
+	<update id="contactsiOSAPIDAO.updateContactInfo">		
+		<![CDATA[
+			UPDATE CONTACT_INFO 
+			SET ID=#newId# 
+			WHERE UUID=#uuid# AND ID=#contactId#
+		]]>
+	</update>
+	
+	<select id="contactsiOSAPIDAO.selectContactInfoList" resultClass="contactsiOSVO">
+
+			SELECT
+				UUID, ID contactId, NAME, TELNO, EMAILS, USEYN
+			FROM CONTACT_INFO
+			WHERE USEYN='Y' AND UUID=#uuid#
+			ORDER BY ID DESC
+	</select>
+	
+	<select id="contactsiOSAPIDAO.selectContactInfo" resultClass="contactsiOSVO">
+
+			SELECT
+				UUID, ID contactId, NAME, TELNO, EMAILS, USEYN
+			FROM CONTACT_INFO
+			WHERE USEYN='Y' AND UUID=#uuid# AND ID=#contactId#
+			ORDER BY ID DESC
+	</select>
+	
+	<delete id="contactsiOSAPIDAO.deleteContactInfo">
+		<![CDATA[
+			DELETE FROM CONTACT_INFO
+			WHERE UUID=#uuid# AND ID=#contactId#
+		]]>
+	</delete>
+	
+	<select id="contactsiOSAPIDAO.selectContactInfoListTotCnt" parameterClass="contactsiOSVO" resultClass="int">
+			SELECT COUNT(*) totcnt
+			FROM CONTACT_INFO
+			WHERE UUID=#uuid#
+	</select>	
+
+</sqlMap>
