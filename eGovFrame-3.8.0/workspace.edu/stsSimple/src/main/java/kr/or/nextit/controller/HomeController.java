@@ -1,4 +1,4 @@
-package kr.or.nextit;
+package kr.or.nextit.controller;
 
 import java.text.DateFormat;
 import java.util.Date;

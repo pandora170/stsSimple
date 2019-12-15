@@ -8,8 +8,9 @@
 </head>
 <body>
 	<h3>list 화면</h3>
-	<a href="insert">글등록</a>
-	<a href="insert2">글등록2</a>
+	<a href="insert">글등록</a>&nbsp;
+	<a href="insert2">글등록2</a>&nbsp;
+	<a href="insert3">글등록3</a>
 	<ul>
 		<li><a href="view?boNo=38">38번 글</a>
 		<li><a href="view?boNo=39">39번 글</a>

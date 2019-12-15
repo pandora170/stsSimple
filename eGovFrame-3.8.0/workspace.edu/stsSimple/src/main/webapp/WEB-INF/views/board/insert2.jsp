@@ -7,11 +7,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+
+<script>
+	
+</script>
+
 </head>
 <body>
 	<h3>게시판 등록2</h3>
 	<form:form commandName="board" action="insert" >
 		글번호 : <form:input path="boNo"/>
+		<form:errors path="boNo"/>
 		<br>
 		제목 : <form:input path="boTitle"/>
 		<form:errors path="boTitle"/>

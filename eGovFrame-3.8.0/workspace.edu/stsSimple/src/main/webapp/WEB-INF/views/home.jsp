@@ -9,6 +9,8 @@
 	Hello world!  
 </h1>
 
-<a href="board/list">List Link</a>
+<a href="board/list">List Link</a><br>
+<a href="register/step1">Regist Link</a><br>
+<a href="register/detail/63?use=Y">path Test</a>
 </body>
 </html>
