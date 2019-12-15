@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+    
+    <context:component-scan base-package="egovframework.example.ioc"></context:component-scan>
+    
+    <!-- 
+    expression
+    excution([접근제어자] return [패키지, 클래스]메서드 *(..)) 
+    * : 모든 / ** : 서브포함 / .. : 모든 아규먼트
+    -->
+    <bean id="aop" class="egovframework.example.ioc.LogginAdvice"/>
+    <aop:config>
+    	<aop:pointcut expression="excution(public egovframework.example.ioc..*.info(..))" id="myPoint"/>
+    	<aop:aspect ref="aop">
+    		<aop:around method="mylog" pointcut-ref="myPoint"/>
+    	</aop:aspect>
+    </aop:config>
+</beans>
